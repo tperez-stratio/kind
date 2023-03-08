@@ -64,7 +64,7 @@ KIND_BUILD_FLAGS?=-trimpath -ldflags="-buildid= -w $(KIND_BUILD_LD_FLAGS)"
 # standard "make" target -> builds
 all: build
 # builds kind in a container, outputs to $(OUT_DIR)
-kind: deps
+kind: 
 	go build -v -o "$(OUT_DIR)/$(KIND_BINARY_NAME)" $(KIND_BUILD_FLAGS)
 # alias for building kind
 build: kind
@@ -111,11 +111,14 @@ lint:
 shellcheck:
 	hack/make-rules/verify/shellcheck.sh
 
-deps:
-	hack/custom/deps.sh
+package:
+	go build -v -o "$(OUT_DIR)/$(KIND_BINARY_NAME)" $(KIND_BUILD_FLAGS)
 
-deploy: build
+deploy:
 	hack/custom/deploy.sh
+
+change-version:
+	hack/custom/change-version.sh $(version)
 
 #################################################################################
 .PHONY: all kind build install unit clean update generate gofmt verify lint shellcheck
