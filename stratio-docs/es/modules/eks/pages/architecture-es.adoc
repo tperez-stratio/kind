@@ -1,0 +1,30 @@
+:toc: left
+:toclevels: 4
+
+= _Stratio KEOS_ en clouds: EKS
+
+Versión 0.1.0
+
+== Arquitectura
+
+"Misconfigurations in infrastructure as code (IaC) can be just as dangerous as vulnerabilities in code."
+
+https://docs.google.com/document/d/1dm9pbb64qPim464cCCdAiYvIxKv_Bogl2_pbUA0kIBY/edit#
+
+=== Interacciones con el _cloud provider_
+
+En un despliegue por defecto, se crean 3 subnets públicas (una por AZ) y 3 subnets privadas (también una por AZ), un NAT gateway por cada subnet pública, un Internet gateway, las rutas asociadas a las subnets privadas para salir a internet a través de los NAT gateways, y un Security Group para cada subnet.
+
+
+
+Accessing the IMDS (only nodes and certain apps) https://snyk.io/blog/hardening-aws-eks-security-rbac-secure-imds-audit-logging/
+
+=== Seguridad
+
+Calico + kyverno !
+
+Accessing the IMDS (only nodes and certain apps) https://snyk.io/blog/hardening-aws-eks-security-rbac-secure-imds-audit-logging/
+
+=== Storage
+
+

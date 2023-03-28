@@ -5,12 +5,6 @@
 
 Versión 0.1.0
 
-== Arquitectura
-
-
-https://docs.google.com/document/d/1dm9pbb64qPim464cCCdAiYvIxKv_Bogl2_pbUA0kIBY/edit#
-
-
 == Instalación
 
 === Prerrequisitos
@@ -24,15 +18,4 @@ https://docs.google.com/document/d/1dm9pbb64qPim464cCCdAiYvIxKv_Bogl2_pbUA0kIBY/
 === Descriptor del cluster
 
 Certificado en credentials !!
-
-== Operación del cluster
-
-=== Escalado estático
-
-=== Autoescalado
-
-=== Upgrade
-
-
-== Troubleshooting
 

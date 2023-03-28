@@ -1,0 +1,13 @@
+:toc: left
+:toclevels: 4
+
+= _Stratio KEOS_ en clouds: GCP
+
+Versión 0.1.0
+
+== Arquitectura
+
+
+https://docs.google.com/document/d/1dm9pbb64qPim464cCCdAiYvIxKv_Bogl2_pbUA0kIBY/edit#
+
+

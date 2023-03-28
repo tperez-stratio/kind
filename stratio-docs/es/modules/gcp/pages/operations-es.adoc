@@ -1,0 +1,18 @@
+:toc: left
+:toclevels: 4
+
+= _Stratio KEOS_ en clouds: GCP
+
+Versión 0.1.0
+
+== Operación del cluster
+
+=== Escalado estático
+
+=== Autoescalado
+
+=== Upgrade
+
+
+== Troubleshooting
+

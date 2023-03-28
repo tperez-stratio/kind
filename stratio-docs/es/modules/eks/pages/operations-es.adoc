@@ -1,0 +1,22 @@
+:toc: left
+:toclevels: 4
+
+= _Stratio KEOS_ en clouds: EKS
+
+Versión 0.1.0
+
+== Operación del cluster
+
+
+
+=== Escalado estático
+
+
+
+=== Autoescalado
+
+
+
+=== Upgrade
+
+
