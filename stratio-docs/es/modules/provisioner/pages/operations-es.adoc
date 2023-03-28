@@ -1,0 +1,165 @@
+:toc: left
+:toclevels: 4
+
+= _Stratio KEOS_ en clouds: EKS
+
+Versión 0.1.0
+
+== Operación del cluster
+
+=== Obtención del kubeconfig
+
+===== [EKS]
+Para EKS, obtenemos el _kubeconfig_ de la forma indicada por AWS:
+
+-----
+aws eks update-kubeconfig --region eu-west-1 --name stg-eks --kubeconfig /data/stratio/kubernetes/cluster-api/aws/workspace/stg-eks.kubeconfig
+-----
+
+===== [GCP]
+
+Al finalizar el aprovisionamiento, el _kubeconfig_ se deja en el directorio de ejecución (workspace).
+
+-----
+ls ./.kube/config
+./.kube/config
+-----
+
+=== Escalado estático
+
+==== Escalar un MachineDeployment
+
+kubectl -n cluster-stg-eks get MachineDeployment
+
+kubectl -n cluster-stg-eks scale --replicas 3 MachineDeployment --all
+kubectl -n cluster-stg-eks get MachineDeployment -w
+
+kubectl -n cluster-stg-eks get MachineDeployment
+kubectl -n cluster-stg-eks get MachineDeployment demo-eks-md-0 -o yaml | yq -y .spec
+
+kubectl -n cluster-stg-eks scale --replicas 2 MachineDeployment --all
+
+==== Crear un nuevo MachineDeployment
+
+kubectl apply -f demo-eks-md-3.yaml
+kubectl -n cluster-stg-eks get MachineDeployment  -w
+
+kubectl delete -f demo-eks-md-3.yaml
+
+#kubectl -n cluster-stg-eks get md,eksct,awsmt
+
+=== Autoescalado
+
+- Editar el MachineDeployment a autoescalar
+
+kubectl -n cluster-stg-eks edit MachineDeployment demo-eks-md-2
+
+- apiVersion: cluster.x-k8s.io/v1beta1
+  kind: MachineDeployment
+  metadata:
+    annotations:
+      cluster.x-k8s.io/cluster-api-autoscaler-node-group-max-size: "6"
+      cluster.x-k8s.io/cluster-api-autoscaler-node-group-min-size: "2"
+
+- Crear un Deployment
+      
+kubectl create deploy test --replicas 1500 --image nginx:alpine
+871
+m6i.4xlarge 234
+kubectl --kubeconfig demo-eks.kubeconfig delete deploy test
+
+- Ver Pods Running
+
+watch "kubectl get po | grep Running | wc -l"
+
+- Ver logs:
+
+kubectl -n keos-autoscaler logs -f --since 5m deploy/my-release-clusterapi-cluster-autoscaler
+
+
+=== Self-healing
+
+kubectl version
+
+kubectl -n cluster-stg-eks patch AWSManagedControlPlane demo-eks-control-plane --type merge -p '{"spec": {"version": "v1.24.0"}}'
+
+kubectl version
+
+# Upgrade de los nodos a 1.24.0 (cordon + drain, no se pierde servicio)
+
+kubectl -n cluster-stg-eks get MachineDeployment
+
+##--!!
+kubectl -n cluster-stg-eks get MachineHealthCheck demo-eks-node-unhealthy -o yaml > demo-eks-node-unhealthy_mhc.yaml
+kubectl -n cluster-stg-eks delete MachineHealthCheck demo-eks-node-unhealthy
+##--!!
+
+kubectl -n cluster-stg-eks patch MachineDeployment demo-eks-md-1 --type merge -p '{"spec": {"template": {"spec": {"version": "v1.24.0"}}}}'
+kubectl -n cluster-stg-eks patch MachineDeployment demo-eks-md-0 --type merge -p '{"spec": {"template": {"spec": {"version": "v1.24.0"}}}}'
+kubectl -n cluster-stg-eks patch MachineDeployment demo-eks-md-2 --type merge -p '{"spec": {"template": {"spec": {"version": "v1.24.0"}}}}'
+
+
+## Simular un error humano: eliminar una VM desde la consola web
+
+* Tiempos
+
+Terminate:  0s
+Provisioned: 50s
+Delete + Provision New: 1m5s
+New is Running: 1m 50s
+New is Ready: 2m
+
+* Prueba
+
+Instances -> <instance> -> Terminate
+
+## Simular un fallo real: parar kubelet <--- NO FUNCIONA en self-hosted clusters !!
+
+* Tiempos
+
+Ha sido necesario borrar el nodo: 
+k delete no ip-10-0-200-175.eu-west-1.compute.internal
+
+* Prueba
+
+Connect to instance -> Session Manager -> sudo su - -> systemctl stop kubelet => NotReady -> NotReady,SchedulingDisabled -> Deleting
+
+kubectl get po -A -o wide | grep ip-10-0-91-150
+
+=== Upgrade
+
+
+=== Eliminación del cluster
+
+Previo a la eliminación de los recusos del _cloud provider_ generados por el cloud-provisioner, se deberán eliminar aquellos que han sido creados por el keos-installer o cualquier automatismo externo.
+
+[start=1]
+. Creamos un cluster local indicando que no se genere ningún objeto en el _cloud provider_.
+
+-----
+[local]$ sudo ./bin/cloud-provisioner create cluster --name prod-eks --descriptor cluster.yaml --vault-password <my-passphrase> --avoid-creation
+
+-----
+
+[start=2]
+. Movemos el management del cluster worker al cluster local, utilizando el kubeconfig de EKS.
+
+-----
+[local]$ sudo clusterctl --kubeconfig $KUBECONFIG move -n cluster-prod-eks --to-kubeconfig /root/.kube/config
+-----
+
+[start=3]
+. Accedemos al cluster local y eliminamos el cluster worker.
+
+-----
+[local]$ sudo docker exec -ti prod-eks-control-plane bash
+root@prod-eks-control-plane:/# k -n cluster-prod-eks delete cl --all
+-----
+
+[start=4]
+. Finalmente, eliminamos el cluster local.
+
+-----
+[local]$ sudo ./bin/cloud-provisioner delete cluster --name prod-eks
+-----
+

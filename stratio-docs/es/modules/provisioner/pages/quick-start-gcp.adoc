@@ -1,0 +1,11 @@
+:toc: left
+:toclevels: 4
+
+= _Stratio KEOS_ en clouds: GCP Quick Start Guide
+
+Versión: 0.1.0
+
+== AA
+
+
+Certificado en credentials !!

@@ -1,41 +1,53 @@
 :toc: left
 :toclevels: 4
 
-= _Stratio KEOS_ en clouds: EKS
+= _Stratio KEOS_ en clouds: Instalación
 
-Versión 0.1.0
+Versión: 0.1.0
 
 == Instalación
 
 === Prerrequisitos
 
-* Roles y permisos
 
-Los 
+===== [EKS]
+
+* Roles y políticas
+
+Para el aprovisionamiento automatizado en EKS, se necesita ejecutar acciones sobre diversos servicios de AWS como ec2, ecr, eks, elasticloadbalancing, etc.
+
+Si bien la utilización o no de estas acciones dependerá del tipo de instalación, el provisioner valida que el usuario indicado tenga estos permisos para poder ejecutarse con normalidad.
+
+xref:./EKS-policy.json[Descargar permisos para EKS]
 
 * Sistemas Operativos certificados
 
-Para asegurar las funcionalidades soportadas en el entorno gestionado de EKS, se deberán utilizar cualquier AMI provista por AWS específicamente para este fin.
+Para asegurar las funcionalidades soportadas por el control-plane gestionado de EKS, se deberá utilizar cualquier AMI provista por AWS específicamente para este fin.
 
-Las AMIs optimizadas para Amazon EKS se crean sobre _Amazon Linux 2_.
+Las https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html[AMIs optimizadas para Amazon EKS] se crean sobre el Sistema Operativo _Amazon Linux 2_.
+
+===== [GCP]
+
+* Permisos
+
+Para los despliegues en Google Cloud Platform, se necesitarán principalmente permisos en compute (instances, disks, images, routers, networks, etc.).
+
+Al igual que con otros providers soportados, el aprovisionamiento requiere una cuenta con todos los permisos solicitados.
+
+xref:./GCP-permissions.list[Descargar permisos para GCP]
+
+
+* Sistemas Operativos certificados
+
+Para los entornos en GCP, se deberá utilizar https://github.com/kubernetes-sigs/image-builder/tree/master/images/capi[_image builder_], una herramienta oficial que permite crear y disponibilizar imágenes para _Stratio KEOS_.
+
+El Sistema Operativo recomendado actualmente para este provider es _Ubuntu 22.04_.
 
 === Infraestructura propia
 
-Si bien una de las ventajas de la creación de recursos automática en el aprovisionamiento es el gran dinamismo que otorga, por motivos de seguridad y compliance, muchas veces es necesario crear ciertos recursos en el _cloud provider_ previamente al despliegue de _Stratio KEOS_.
+Si bien una de las ventajas de la creación de recursos automática en el aprovisionamiento es el gran dinamismo que otorga, por motivos de seguridad y compliance, muchas veces es necesario crear ciertos recursos previo al despliegue de _Stratio KEOS_ en el _cloud provider_.
 
-En este sentido, instalador permite utilizar tanto un VPC como subnets previamente creadas utilizando el parámetro _networks_ en el descriptor del cluster, como veremos a continuación.
-
-=== cloud-provisioner
-
-Binario
-parametros
-input
-Se puede indicar la passphrase de los secretos como parametro del cloud-provisioner
-
-=== Proceso de instalación
-
-wget http://qa.int.stratio.com/repository/paas/cloud-provisioner/cloud-provisioner-0.1.0-SNAPSHOT.tar.gz
-create cluster
+En este sentido, el provisioner permite utilizar tanto un VPC como subnets previamente creadas utilizando el parámetro _networks_ en el descriptor del cluster, como veremos a continuación.
 
 === Descriptor del cluster
 
@@ -68,9 +80,9 @@ El spec del KeosCluster está compuesto por los siguientes campos:
 |eks
 |No
 
-|credentials
+|<<credentials,credentials>>
 |Set de credenciales del _cloud provider_ usadas en el aprovisionamiento.
-|ver el <<Ejemplo de manifest>>
+|ver el <<ejemplo_de_descriptor,Ejemplo de descriptor>>
 |Si en 1a ejecución
 
 |k8s_version
@@ -83,19 +95,19 @@ El spec del KeosCluster está compuesto por los siguientes campos:
 |eu-west-1
 |No
 
-|networks
+|<<networks,networks>>
 |Identificadores de infraestructura creada previamente.
-|ver el <<Ejemplo de manifest>>
+|ver el <<ejemplo_de_descriptor,Ejemplo de descriptor>>
 |Si
 
-|control_plane
+|<<control_plane,control_plane>>
 |Especificaciones para el control plane de Kubernetes.
-|ver el <<Ejemplo de manifest>>
+|ver el <<ejemplo_de_descriptor,Ejemplo de descriptor>>
 |No
 
-|worker_nodes
+|<<worker_nodes,worker_nodes>>
 |Especificaciones de los grupos de nodos worker.
-|ver el <<Ejemplo de manifest>>
+|ver el <<ejemplo_de_descriptor,Ejemplo de descriptor>>
 |No
 
 |external_domain
@@ -103,9 +115,9 @@ El spec del KeosCluster está compuesto por los siguientes campos:
 |domain.ext
 |No
 
-|keos
+|<<keos,keos>>
 |Sección de configuraciones para la instalación de KEOS.
-|ver el <<Ejemplo de manifest>>
+|ver el <<ejemplo_de_descriptor,Ejemplo de descriptor>>
 |No
 
 |===
@@ -126,23 +138,23 @@ Los siguientes campos son considerados secretos del aprovisionamiento:
 
 |aws
 |Credenciales para acceso a AWS.
-|ver el <<Ejemplo de manifest>>
+|ver el <<ejemplo_de_descriptor,Ejemplo de descriptor>>
 |Cuando infra_provider=aws
 
 |gcp
 |Credenciales para acceso a GCP.
-|ver el <<Ejemplo de manifest>>
+|ver el <<ejemplo_de_descriptor,Ejemplo de descriptor>>
 |Cuando infra_provider=gcp
 
 |github_token
 |Token de Github.
 |github_pat_11APW..
-|No
+|Si
 
 |docker_registries
 |Registries de Docker accesibles por los nodos.
 |-
-|No
+|Si
 
 |===
 
@@ -362,6 +374,51 @@ spec:
     version: 0.8.2
 ---
 ----
+
+=== Provisioner
+
+El _cloud-provisioner_ es una herramienta que facilita el aprovisionamiento de los elementos necesarios en el _cloud provider_ especificado para la creación de un cluster de Kubernetes según el <<descriptor_del_cluster,descriptor>> especificado.
+
+Actualmente, este binario incluye las siguientes opciones:
+
+- --descriptor: permite indicar el path al descriptor del cluster.
+- --vault-password: permite indicar la passphrase de cifrado de las credenciales.
+- --avoid-creation: no se crea el cluster worker, sólo el cluster local.
+- --keep-mgmt: crea el cluster worker, pero deja su gestión en el cluster local.
+- --retain: permite mantener el cluster local aún sin management.
+
+Para crear un cluster, basta con un simple comando:
+
+-----
+sudo ./cloud-provisioner create cluster --name stratio-pre --descriptor cluster-gcp.yaml
+Vault Password: 
+Rewrite Vault Password:
+Creating temporary cluster "stratio-pre" ...
+ ✓ Ensuring node image (kindest/node:v1.24.7) 🖼
+ ✓ Building Stratio image (stratio-capi-image:v1.24.7) 📸
+ ✓ Preparing nodes 📦  
+ ✓ Writing configuration 📜 
+ ✓ Starting control-plane 🕹️ 
+ ✓ Installing CNI 🔌 
+ ✓ Installing StorageClass 💾 
+ ✓ Installing CAPx 🎖️ 
+ ✓ Generating workload cluster manifests 📝 
+ ✓ Generating secrets file 📝🗝️ 
+ ✓ Creating the workload cluster 💥 
+ ✓ Saving the workload cluster kubeconfig 📝 
+ ✓ Installing Calico in workload cluster 🔌 
+ ✓ Installing StorageClass in workload cluster 💾 
+ ✓ Preparing nodes in workload cluster 📦 
+ ✓ Enabling workload cluster's self-healing 🏥 
+ ✓ Installing CAPx in workload cluster 🎖️ 
+ ✓ Adding Cluster-Autoescaler 🗚 
+ ✓ Moving the management role 🗝️ 
+ ✓ Generating the KEOS descriptor 📝
+
+The cluster has been installed, please refer to Stratio KEOS documentation on how to proceed.
+-----
+
+Una vez finalizado el proceso, tendremos los ficheros necesarios (keos.yaml y secrets.yml) para instalar KEOS.
 
 
 
