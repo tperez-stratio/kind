@@ -2,7 +2,7 @@
 
 DIR=bin
 BASEDIR=`dirname $0`/../..
-VERSION=`cat $BASEDIR/VERSION`
+VERSION=$1
 EXTENSION="tar.gz"
 
 if [ -d "$DIR" ] || [ -r "$DIR"/cloud-provisioner]; then
