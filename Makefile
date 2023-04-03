@@ -115,7 +115,7 @@ package:
 	make build && hack/custom/package.sh
 
 deploy:
-	hack/custom/deploy.sh
+	hack/custom/deploy.sh $(version)
 
 change-version:
 	hack/custom/change-version.sh $(version)
