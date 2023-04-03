@@ -112,7 +112,7 @@ shellcheck:
 	hack/make-rules/verify/shellcheck.sh
 
 package:
-	make build && hack/custom/package.sh
+	make build && hack/custom/package.sh $(version)
 
 deploy:
 	hack/custom/deploy.sh $(version)
