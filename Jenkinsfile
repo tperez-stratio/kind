@@ -10,6 +10,7 @@ hose {
     UPSTREAM_VERSION = '0.17.0'
     DEPLOYONPRS = true
     GRYPE_TEST = false
+    MODULE_LIST = [ "kind.bin:cloud-provisioner"]
 
     DEV = { config ->
         doPackage(conf: config, parameters: "GOCACHE=/tmp")
