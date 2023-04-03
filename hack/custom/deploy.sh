@@ -2,7 +2,7 @@
 
 DIR=bin
 BASEDIR=`dirname $0`/../..
-VERSION=`cat $BASEDIR/VERSION`
+VERSION=$1
 EXTENSION="tar.gz"
 GROUP_ID="repository.paas.cloud-provisioner"
 GROUP_ID_NEXUS=${GROUP_ID//.//}
