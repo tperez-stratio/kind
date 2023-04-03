@@ -14,6 +14,6 @@ hose {
 
     DEV = { config ->
         doPackage(conf: config, parameters: "GOCACHE=/tmp")
-        doDeploy(conf:config)
+        doHandsOffDeploy(conf: config, sources: ["bin/cloud-provisioner-%%VERSION.tar.gz"], targetRepositoryGroup: "paas", targetSubfolder: "cloud-provisioner", buildDestination: false)
     }
 }

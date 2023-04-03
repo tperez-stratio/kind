@@ -111,10 +111,8 @@ lint:
 shellcheck:
 	hack/make-rules/verify/shellcheck.sh
 
-
-
 package:
-	go build -v -o "$(OUT_DIR)/$(KIND_BINARY_NAME)" $(KIND_BUILD_FLAGS)
+	make build && hack/custom/package.sh
 
 deploy:
 	hack/custom/deploy.sh
