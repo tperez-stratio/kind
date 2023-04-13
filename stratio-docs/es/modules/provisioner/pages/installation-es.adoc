@@ -83,7 +83,7 @@ El spec del KeosCluster está compuesto por los siguientes campos:
 |<<credentials,credentials>>
 |Set de credenciales del _cloud provider_ usadas en el aprovisionamiento.
 |ver el <<ejemplo_de_descriptor,Ejemplo de descriptor>>
-|Si en 1a ejecución
+|No en 1a ejecución
 
 |k8s_version
 |Versión de Kubernetes del cluster. Debe estar alineada tanto con EKS como con _Stratio KEOS_.
@@ -139,12 +139,12 @@ Los siguientes campos son considerados secretos del aprovisionamiento:
 |aws
 |Credenciales para acceso a AWS.
 |ver el <<ejemplo_de_descriptor,Ejemplo de descriptor>>
-|Cuando infra_provider=aws
+|No cuando infra_provider=aws
 
 |gcp
 |Credenciales para acceso a GCP.
 |ver el <<ejemplo_de_descriptor,Ejemplo de descriptor>>
-|Cuando infra_provider=gcp
+|No cuando infra_provider=gcp
 
 |github_token
 |Token de Github.
@@ -198,7 +198,7 @@ a|
 logging:
   api_server: true
 ----
-|No
+|Si
 
 |managed
 |Indica si el control-plane es o no gestionado en el _cloud provider_.
@@ -220,37 +220,37 @@ Las imágenes utilizadas deberán estar soportadas por EKS (ver https://repost.a
 |name
 |Nombre del grupo. Se utilizará como prefijo de las instancias.
 |eks-prod-gpu
-|Si
+|No
 
 |quantity
 |Cantidad de nodos del grupo. Se recomienda que sea múltiplo de 3 para no tener zonas desbalanceadas.
 |15
-|Si
+|No
 
 |size
 |Tipo de instancia.
 |t3.medium
-|Si
+|No
 
 |max_size / min_size
 |Máximo y mínimo número de instancias para el autoescalado.
 |6 / 18.
-|No
+|Si
 
 |az
 |Zona para todo el grupo (invalida el parámetro zone_distribution).
 |eu-east-1a
-|No
+|Si
 
 |zone_distribution
 |Indica si los nodos se repartirán equitativamente en las zonas (por defecto) o no.
 |unbalanced
-|No
+|Si
 
 |node_image
 |Imágen de instancia utilizada para los nodos worker.
 |ami-0de933c15c9b49fb5
-|No
+|No para infra_provider: gcp
 
 |labels
 |Etiquetas de Kubernetes para los nodos worker.
@@ -261,7 +261,7 @@ labels:
   disktype: standard
   gpus: true
 ----
-|No
+|Si
 
 |root_volume
 |Particularidades del volúmen como tamaño, tipo y encripción.
@@ -273,12 +273,12 @@ root_volume:
   type: gp2
   encrypted: true
 ----
-|No
+|Si
 
 |ssh_key
 |Clave ssh pública para acceso a los nodos worker. Debe estar creada en AWS previamente. Se recomienda no añadir ninguna clave ssh a los nodos.
 |prod-key
-|No
+|Si
 
 |===
 
@@ -293,12 +293,12 @@ Los parámetros para la fase del keos-installer se indicarán en este apartado.
 |flavour
 |Sabor de instalación, que indica tamaño del cluster y resiliencia. Por defecto es "production".
 |development
-|No
+|Si
 
 |version
 |Versión del keos-installer.
 |0.8.0
-|Si
+|No
 
 |===
 
