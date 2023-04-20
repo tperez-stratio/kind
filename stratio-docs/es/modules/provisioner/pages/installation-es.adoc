@@ -1,5 +1,10 @@
 :toc: left
 :toclevels: 4
+// Images dir path for AsciidocFX:
+// :imagesdir: stratio-docs/es/modules/provisionerassets/images
+// Images dir path for GitHub:
+:imagesdir: /stratio-docs/es/modules/provisionerassets/images
+// Antora does not require the `imagesdir` directive
 
 = _Stratio KEOS_ en clouds: Instalación
 

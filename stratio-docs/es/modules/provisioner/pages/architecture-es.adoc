@@ -1,36 +1,46 @@
 :toc: left
 :toclevels: 4
+// Images dir path for AsciidocFX:
+//:imagesdir: stratio-docs/es/modules/provisioner/assets/images
+// Images dir path for GitHub:
+:imagesdir: /stratio-docs/es/modules/provisioner/assets/images
+// Antora does not require the `imagesdir` directive
 
 = _Stratio KEOS_ en clouds: Arquitectura
 
 Versión: 0.1.0
 
-== Arquitectura
+== Arquitectura de referencia
 
-"Misconfigurations in infrastructure as code (IaC) can be just as dangerous as vulnerabilities in code."
-
-https://docs.google.com/document/d/1dm9pbb64qPim464cCCdAiYvIxKv_Bogl2_pbUA0kIBY/edit#
+image::EKS_reference-architecture.png[]
 
 === Objetos del _cloud provider_
 
-En un despliegue *por defecto*, se crean los siguientes objetos en AWS:
+===== [EKS]
+
+En un despliegue *por defecto*, se crean los siguientes objetos en AWS (en [silver]#gris# los opcionales según especificado en el descriptor del cluster):
+
+* [silver]#1 VPC.#
+* [silver]#6 subnets con sus respectivas tablas de rutas.#
+** [silver]#3 subnets públicas (una por AZ).#
+** [silver]#3 subnets privadas (también una por AZ).#
+* [silver]#1 NAT gateway por cada subnet pública.#
+* [silver]#1 Internet gateway para la VPC.#
+* [silver]#1 ruta por defecto en la tabla de rutas de cada subnets privada para salir a internet a través de los NAT gateways.#
+* [silver]#1 ruta por defecto en la tabla de rutas de cada subnets pública para salir a internet a través del Internet Gateway.#
 
 * 1 IAM Policy para los nodos del cluster (nodes.cluster-api-provider-aws.sigs.k8s.io)
 * 1 IAM Role para los nodos del cluster (nodes.cluster-api-provider-aws.sigs.k8s.io)
-* 1 VPC
-* 6 subnets con sus respectivas tablas de rutas
-** 3 subnets públicas (una por AZ)
-** 3 subnets privadas (también una por AZ)
-* 1 NAT gateway por cada subnet pública
-* 1 Internet gateway para la VPC
-* 1 ruta por defecto en la tabla de rutas de cada subnets privada para salir a internet a través de los NAT gateways.
-* 1 ruta por defecto en la tabla de rutas de cada subnets pública para salir a internet a través del Internet Gateway.
 * 1 cluster de Elastic Kubernetes Service (EKS) con add-ons para EBS y CNI, logging (si se ha especificado), y un OIDC provider.
 ** 2 Security Groups de EKS para el Control Plane y los nodos Worker.
 ** 1 IAM Role con la policy AmazonEKSClusterPolicy
 
 
-Accessing the IMDS (only nodes and certain apps) https://snyk.io/blog/hardening-aws-eks-security-rbac-secure-imds-audit-logging/
+#Accessing the IMDS (only nodes and certain apps) https://snyk.io/blog/hardening-aws-eks-security-rbac-secure-imds-audit-logging/#
+
+===== [GCP]
+
+??
 
 === Seguridad
 
@@ -42,7 +52,7 @@ Este endpoint se publica a internet, y su acceso se restringe con una combinaci�
 
 ==== Seguridad de red
 
-Calico + kyverno !
+#Calico + kyverno !#
 
 Accessing the IMDS (only nodes and certain apps) https://snyk.io/blog/hardening-aws-eks-security-rbac-secure-imds-audit-logging/
 

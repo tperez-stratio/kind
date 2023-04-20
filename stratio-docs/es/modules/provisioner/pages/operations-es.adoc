@@ -1,11 +1,19 @@
 :toc: left
 :toclevels: 4
+// Images dir path for AsciidocFX:
+//:imagesdir: stratio-docs/es/modules/provisioner/assets/images
+// Images dir path for GitHub:
+:imagesdir: /stratio-docs/es/modules/provisioner/assets/images
+// Antora does not require the `imagesdir` directive
 
 = _Stratio KEOS_ en clouds: EKS
 
 Versión 0.1.0
 
 == Operación del cluster
+
+_"Los errores de configuración en la infraestructura como código (IaC), pueden ser tan peligrosos como las vulnerabilidades en el código."_
+
 
 === Obtención del kubeconfig
 
