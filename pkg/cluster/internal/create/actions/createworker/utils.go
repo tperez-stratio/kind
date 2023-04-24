@@ -80,6 +80,9 @@ func convertToMapStringString(m map[string]interface{}) map[string]string {
 func convertStringMapToInterfaceMap(inputMap map[string]string) map[string]interface{} {
 	outputMap := make(map[string]interface{})
 	for key, value := range inputMap {
+		if key == "AccountID" {
+			outputMap["account_id"] = value
+		}
 		outputMap[key] = value
 	}
 	return outputMap
