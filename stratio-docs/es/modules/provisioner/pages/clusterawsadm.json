@@ -1,0 +1,33 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:createStack",
+                "cloudformation:deleteStack",
+                "cloudformation:updateStack",
+                "iam:*",
+                "iam:CreateManagedPolicy",
+                "iam:DeleteManagedPolicy",
+                "iam:DeleteGroup",
+                "iam:CreateGroup",
+                "iam:CreateInstanceProfile",
+                "iam:DeleteInstanceProfile",
+                "iam:DeleteRole",
+                "iam:CreateRole",
+                "cloudformation:CreateChangeSet",
+                "cloudformation:ListStacks",
+                "cloudformation:DescribeStacks",
+                "cloudformation:DescribeStackResources",
+                "cloudformation:DescribeStackEvents",
+                "cloudformation:ValidateTemplate",
+                "cloudformation:DescribeChangeSet",
+                "cloudformation:ExecuteChangeSet",
+                "cloudformation:GetTemplateSummary"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

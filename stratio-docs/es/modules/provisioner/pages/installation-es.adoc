@@ -81,8 +81,8 @@ El spec del KeosCluster está compuesto por los siguientes campos:
 |No
 
 |infra_provider
-|Nombre del _cloud provider_ (eks o gcp).
-|eks
+|Nombre del _cloud provider_ (aws o gcp).
+|aws
 |No
 
 |<<credentials,credentials>>

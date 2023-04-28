@@ -18,7 +18,7 @@ image::EKS_reference-architecture.png[]
 
 ===== [EKS]
 
-En un despliegue *por defecto*, se crean los siguientes objetos en AWS (en [silver]#gris# los opcionales según especificado en el descriptor del cluster):
+En un despliegue *por defecto*, se crean los siguientes objetos en AWS (en [silver]#gris# los objetos opcionales que dependerán de lo especificado en el descriptor del cluster):
 
 * [silver]#1 VPC.#
 * [silver]#6 subnets con sus respectivas tablas de rutas.#
@@ -33,22 +33,46 @@ En un despliegue *por defecto*, se crean los siguientes objetos en AWS (en [silv
 * 1 IAM Role para los nodos del cluster (nodes.cluster-api-provider-aws.sigs.k8s.io)
 * 1 cluster de Elastic Kubernetes Service (EKS) con add-ons para EBS y CNI, logging (si se ha especificado), y un OIDC provider.
 ** 2 Security Groups de EKS para el Control Plane y los nodos Worker.
-** 1 IAM Role con la policy AmazonEKSClusterPolicy
+** 1 IAM Role con la policy AmazonEKSClusterPolicy.
 
-
-#Accessing the IMDS (only nodes and certain apps) https://snyk.io/blog/hardening-aws-eks-security-rbac-secure-imds-audit-logging/#
+* VMs para Workers (según descriptor del cluster y autoescalado).
+** 1 Volúmen EBS por VM.
+* 1 Load Balancer tipo Network para exposición de servicios.
+** 1 Listener por puerto para cada Service tipo LB.
+* Vólumen EBS para cada PV.
 
 ===== [GCP]
 
-??
+* 1 Load Balancer tipo SSL/TCP para el APIserver.
+* 1 HealthCheck para el Unmanage Instance Group.
+* 1 CloudNat Asociando VPC
+* 1 Cloud Router
+* Reglas de firewall
+* 1 Unmanage Instance Group para el control-plane.
+
+* 1/3 VMs para el control-plane (según descriptor del cluster).
+** 1 Volúmen EBS por VM.
+* VMs para Workers (según descriptor del cluster y autoescalado).
+** 1 Volúmen EBS por VM.
+* 1 Load Balancer L4 para exposición de servicios.
+** 1 Listener por puerto para cada Service tipo LB.
+* Vólumen EBS para cada PV.
 
 === Seguridad
 
+#Accessing the IMDS (only nodes and certain apps) https://snyk.io/blog/hardening-aws-eks-security-rbac-secure-imds-audit-logging/#
+
 ==== APIserver endpoint access
+
+===== [EKS]
 
 Durante la creación del cluster de EKS, se crea un endpoint para el APIserver que se utilizará para el acceso al cluster desde el instalador y operaciones del ciclo de vida.
 
 Este endpoint se publica a internet, y su acceso se restringe con una combinación de reglas de AWS Identity and Access Management (IAM), y el Role Based Access Control (RBAC) nativo de Kubernetes.
+
+===== [GCP]
+
+
 
 ==== Seguridad de red
 
