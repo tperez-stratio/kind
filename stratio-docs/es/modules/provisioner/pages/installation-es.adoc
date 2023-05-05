@@ -154,7 +154,7 @@ Los siguientes campos son considerados secretos del aprovisionamiento:
 |github_token
 |Token de Github.
 |github_pat_11APW..
-|Si
+|No
 
 |docker_registries
 |Registries de Docker accesibles por los nodos.
