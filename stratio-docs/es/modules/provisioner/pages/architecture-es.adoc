@@ -76,7 +76,9 @@ Este endpoint se publica a internet, y su acceso se restringe con una combinaci�
 
 ===== [GCP]
 
+Para la exposición del APIserver, se crea un Load Balancer con nombre <cluster_id>-apiserver y puerto 443 accesible por red pública (la IP pública asignada es la misma que se configura en el Kubeconfig), y un instance groups por AZ (1 o 3, según configuración de HA) con el nodo de control-plane correspondiente.
 
+El HealthCheck del servicio se hace por SSL, pero se recomienda cambiar a HTTPS con path /healthz.
 
 === Storage
 
@@ -96,5 +98,7 @@ Estos discos se crean en la provisión inicial de los nodos workers, por lo que 
 
 ==== StorageClass
 
-Por defecto, el cluster disponibiliza una StorageClass (gcp2) para disco EBS con filesystem ext4. Esta StorageClass se crea con _reclaimPolicy: Delete_ y
-  _volumeBindingMode: WaitForFirstConsumer_, esto es, que el disco se creará en el momento que un Pod consuma el PersistentVolumeClaim correspondiente, y que se eliminará al borrar el PersistentVolume.
+Por defecto, el cluster disponibiliza una StorageClass ("gp2" en AWS y "csi-gcp-pd" en GCP) para disco de bloques con filesystem ext4. Esta StorageClass se crea con _reclaimPolicy: Delete_ y _volumeBindingMode: WaitForFirstConsumer_, esto es, que el disco se creará en el momento que un Pod consuma el PersistentVolumeClaim correspondiente, y se eliminará al borrar el PersistentVolume.
+
+Se deberá tener en cuenta que los PersistentVolumes creados a partir de esta StorageClass tendrán afinidad con la zona donde se han consumido.
+

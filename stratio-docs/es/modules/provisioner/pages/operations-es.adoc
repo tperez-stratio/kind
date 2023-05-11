@@ -14,6 +14,7 @@ Versión 0.1.0
 == Obtención del kubeconfig
 
 ===== [EKS]
+
 Para EKS, obtenemos el _kubeconfig_ de la forma indicada por AWS:
 
 -----
@@ -46,7 +47,6 @@ Para la gestión APIficada del cluster, se crean los siguientes grupos de objeto
 - Para la definición de los nodos workers se utilizarán MachineDeployment, EKSConfigTemplate y AWSMachineTemplate.
 - Para definir parámetros del control-plane (EKS), utilizaremos el objeto AWSManagedControlPlane.
 - Para indicar los parámetros del self-healing, se utiliza un MachineHealthCheck para todo el cluster.
-
 
 === Self-healing
 

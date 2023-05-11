@@ -14,7 +14,6 @@ Versión: 0.1.0
 
 === Prerrequisitos
 
-
 ===== [EKS]
 
 * Roles y políticas
@@ -66,7 +65,6 @@ apiVersion: installer.stratio.com/v1beta1
 kind: KeosCluster
 spec:
 ----
-
 
 ==== spec
 
