@@ -10,12 +10,8 @@
 
 Versión 0.1.0
 
-== Operación del cluster
 
-_"Los errores de configuración en la infraestructura como código (IaC), pueden ser tan peligrosos como las vulnerabilidades en el código."_
-
-
-=== Obtención del kubeconfig
+== Obtención del kubeconfig
 
 ===== [EKS]
 Para EKS, obtenemos el _kubeconfig_ de la forma indicada por AWS:
@@ -33,34 +29,101 @@ ls ./.kube/config
 ./.kube/config
 -----
 
+== Operación del cluster
+
+Utilizando los objetos del apartado anterior, Stratio KEOS nos permite realizar las siguientes operaciones interactuando únicamente con el APIserver.
+
+Serán los controllers desplegados quienes, en los ciclos de reconciliación, realizarán las tareas necesarias.
+
+=== Self-healing
+
+La capacidad de self-healing del cluster es gestionada por el objeto MachineHealthCheck:
+
+----
+$ k -n cluster-example get mhc -o yaml
+...
+  spec:
+    clusterName: example
+    maxUnhealthy: 100%
+    nodeStartupTimeout: 5m0s
+    selector:
+      matchLabels:
+        keos.stratio.com/machine-role: example-worker-node
+    unhealthyConditions:
+    - status: Unknown
+      timeout: 1m0s
+      type: Ready
+    - status: "False"
+      timeout: 1m0s
+      type: Ready
+...
+----
+
+==== Test node failover
+
+En caso de fallo en un nodo, éste será detectado por un controller y se procederá al reemplazo del mismo, eliminándolo y volviendo a crear otro del mismo grupo, lo que asegura las mismas características.
+
+Para simular un fallo en una VM, la eliminaremos desde la consola web del _cloud provider_.
+
+La recuperación del nodo comprende las siguientes fases y tiempos:
+
+. Terminate VM from console:  0s
+. New VM is Provisioning: 50s
+. Old Machine is Deleted & the new one is Provisioned: 1m5s
+. New Machine is Running & new k8s node is NotReady: 1m 50s
+. New k8s node is Ready: 2m
+
 === Escalado estático
 
-==== Escalar un MachineDeployment
+Si bien el escalado manual es desaconsejable, se presentan estas operaciones para casos sin autoescalado o nuevos grupos de nodos.
 
-kubectl -n cluster-stg-eks get MachineDeployment
+==== Escalar un grupo de workers
+
+Para escalar manualmente un grupo de workers hacemos uso del objeto MachineDeployment, que soporta el comando scale de kubectl:
 
 kubectl -n cluster-stg-eks scale --replicas 3 MachineDeployment --all
-kubectl -n cluster-stg-eks get MachineDeployment -w
+
+Vemos el nuevo número de réplicas y los nuevos objetos Machine:
 
 kubectl -n cluster-stg-eks get MachineDeployment
-kubectl -n cluster-stg-eks get MachineDeployment demo-eks-md-0 -o yaml | yq -y .spec
+kubectl -n cluster-stg-eks get Machine
 
-kubectl -n cluster-stg-eks scale --replicas 2 MachineDeployment --all
+==== Crear un nuevo grupo de workers
 
-==== Crear un nuevo MachineDeployment
+===== [EKS]
 
-kubectl apply -f demo-eks-md-3.yaml
-kubectl -n cluster-stg-eks get MachineDeployment  -w
+En EKS se deberán crear los siguientes tres objetos: MachineDeployment, AWSMachineTemplate y EKSConfigTemplate.
 
-kubectl delete -f demo-eks-md-3.yaml
+Una vez confeccionado el manifest, la creación del grupo consiste simplemente en aplicarlo al cluster de la siguiente forma:
 
-#kubectl -n cluster-stg-eks get md,eksct,awsmt
+kubectl apply -f xref:./example-eks-md.yaml[example-eks-md.yaml]
+
+Para ver los objetos creados:
+
+kubectl -n cluster-example get md,eksct,awsmt
+
+===== [GCP]
+
+Para el caso de GCP, se crearemos: MachineDeployment, GCPMachineTemplate y KubeadmConfigTemplate.
+
+De la misma forma, aplicamos el manifest para crear el nuevo grupo de workers:
+
+kubectl apply -f xref:./example-gcp-md.yaml[example-gcp-md.yaml]
+
+Para ver los objetos creados:
+
+kubectl -n cluster-example get md,gcpmachinetemplate,kubeadmconfigtemplate
 
 === Autoescalado
 
-- Editar el MachineDeployment a autoescalar
+Para el autoescalado de nodos, se utiliza cluster-autoscaler, quien detectará Pods pendientes de ejecutar por falta de recursos y escalará el grupo de nodos que considere según los filtros de los despliegues.
 
-kubectl -n cluster-stg-eks edit MachineDeployment demo-eks-md-2
+Esta operación se realiza en el APIserver, siendo los controllers los encargados de crear las VMs en el cloud provider y agregarlas al clusters como nodos workers de Kubernetes.
+
+Dado que el autoescalado está basado en el cluster-autoscaler, añadiremos el mínimo y máximo en el grupo de nodos workers como annotations:
+
+----
+$ kubectl -n cluster-stg-eks edit MachineDeployment demo-eks-md-2
 
 - apiVersion: cluster.x-k8s.io/v1beta1
   kind: MachineDeployment
@@ -68,74 +131,48 @@ kubectl -n cluster-stg-eks edit MachineDeployment demo-eks-md-2
     annotations:
       cluster.x-k8s.io/cluster-api-autoscaler-node-group-max-size: "6"
       cluster.x-k8s.io/cluster-api-autoscaler-node-group-min-size: "2"
+  ...
+----
 
-- Crear un Deployment
-      
+==== Prueba
+
+Para probar el autoescalado podemos crear un Deployment con suficientes réplicas de modo que no se puedan ejecutar en los nodos actuales:
+
+----  
 kubectl create deploy test --replicas 1500 --image nginx:alpine
-871
-m6i.4xlarge 234
+----
+
+Al terminar la prueba, eliminamos el Deployment
+
+----
 kubectl --kubeconfig demo-eks.kubeconfig delete deploy test
+----
 
-- Ver Pods Running
+==== Logs
 
-watch "kubectl get po | grep Running | wc -l"
+Los logs del cluster-autoscaler se pueden ver desde su Deployment:
 
-- Ver logs:
-
-kubectl -n keos-autoscaler logs -f --since 5m deploy/my-release-clusterapi-cluster-autoscaler
-
-
-=== Self-healing
-
-kubectl version
-
-kubectl -n cluster-stg-eks patch AWSManagedControlPlane demo-eks-control-plane --type merge -p '{"spec": {"version": "v1.24.0"}}'
-
-kubectl version
-
-# Upgrade de los nodos a 1.24.0 (cordon + drain, no se pierde servicio)
-
-kubectl -n cluster-stg-eks get MachineDeployment
-
-##--!!
-kubectl -n cluster-stg-eks get MachineHealthCheck demo-eks-node-unhealthy -o yaml > demo-eks-node-unhealthy_mhc.yaml
-kubectl -n cluster-stg-eks delete MachineHealthCheck demo-eks-node-unhealthy
-##--!!
-
-kubectl -n cluster-stg-eks patch MachineDeployment demo-eks-md-1 --type merge -p '{"spec": {"template": {"spec": {"version": "v1.24.0"}}}}'
-kubectl -n cluster-stg-eks patch MachineDeployment demo-eks-md-0 --type merge -p '{"spec": {"template": {"spec": {"version": "v1.24.0"}}}}'
-kubectl -n cluster-stg-eks patch MachineDeployment demo-eks-md-2 --type merge -p '{"spec": {"template": {"spec": {"version": "v1.24.0"}}}}'
-
-
-## Simular un error humano: eliminar una VM desde la consola web
-
-* Tiempos
-
-Terminate:  0s
-Provisioned: 50s
-Delete + Provision New: 1m5s
-New is Running: 1m 50s
-New is Ready: 2m
-
-* Prueba
-
-Instances -> <instance> -> Terminate
-
-## Simular un fallo real: parar kubelet <--- NO FUNCIONA en self-hosted clusters !!
-
-* Tiempos
-
-Ha sido necesario borrar el nodo: 
-k delete no ip-10-0-200-175.eu-west-1.compute.internal
-
-* Prueba
-
-Connect to instance -> Session Manager -> sudo su - -> systemctl stop kubelet => NotReady -> NotReady,SchedulingDisabled -> Deleting
-
-kubectl get po -A -o wide | grep ip-10-0-91-150
+----
+$ k -n kube-system logs -f -l app.kubernetes.io/name=clusterapi-cluster-autoscaler
+----
 
 === Upgrade
 
+La actualización del cluster a una versión superior de Kubernetes se realizará en dos partes, primero el control-plane y, una vez que este esté en la nueva versión, se procederá a la actualización de los nodos workers.
+
+==== Control Plane
+
+Para la actualización del control-plane, ejecutaremos un patch de spec.version en el objeto AWSManagedControlPlane.
+
+$ kubectl -n cluster-example patch AWSManagedControlPlane example-control-plane --type merge -p '{"spec": {"version": "v1.24.0"}}'
+
+==== Workers
+
+Para cada grupo de nodos workers del cluster, ejecutaremos un patch de spec.template.spec.version en el objeto MachineDeployment correspondiente al grupo.
+
+$ kubectl -n cluster-example patch MachineDeployment example-md-1 --type merge -p '{"spec": {"template": {"spec": {"version": "v1.24.0"}}}}'
+
+Nota: el controller aprovisiona un nuevo nodo del grupo de workers con la versión actualizada y una vez que esté Ready en Kubernetes, elimina un nodo con la versión vieja, de esta forma asegura siempre el número de nodos configurado.
 
 === Eliminación del cluster
 

@@ -9,8 +9,8 @@ Versión: 0.1.0
 
 * Usuario con los privilegios necesarios en AWS.
 ** Crear usuario para la instalacion.
-** Crear política según EKS-policy.json.
-** Crear política según clusterawsadm.json (sólo para la instalación).
+** Crear política según stratio-policy.json.
+** Crear política según stratio-temp-policy.json (sólo para la instalación).
 ** Adjuntar políticas al usuario.
 ** Crear una Access key.
 
@@ -52,7 +52,7 @@ Nota: Por defecto, el reparto de nodos se hará en las zonas a, b y c de la regi
 
 === Consideraciones
 
-* Se deberán indicar 3 subnets, una por zona de la región (a, b y c).
+* En caso de utilizar infraestructura custom, se deberá indicar la VPC y 3 subnets, una por zona de la región (a, b y c).
 * La versión de Kubernetes indicada debe estar soportada por EKS.
 * Los nombres de los grupos de worker_nodes no pueden repetirse.
 

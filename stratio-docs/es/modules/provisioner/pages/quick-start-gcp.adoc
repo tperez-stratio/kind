@@ -5,7 +5,100 @@
 
 Versión: 0.1.0
 
-== AA
+== Prerrequisitos:
 
 
-Certificado en credentials !!
+!!!!!!! Certificado en credentials !!
+
+* Usuario con los privilegios necesarios en AWS.
+** Crear usuario para la instalacion.
+** Crear política según stratio-gcp-permissions.list.
+** Adjuntar políticas al usuario.
+** Crear una Access key.
+
+* Hosted zone creada en AWS (opcional).
+
+* Infra custom creada en AWS (opcional).
+
+* Componer el fichero descriptor del cluster.
+** Las credenciales del usuario (se cifrarán en la primer ejecución).
+** Datos de la cuenta (región y account_id).
+** Datos de la infraestructura ya creada (opcional).
+** Zona DNS de la hosted zone (opcional).
+** URL de ECR.
+** Habilitar el logging en EKS por componente (opcional).
+** Grupos de nodos.
+
+=== Worker nodes
+
+En el descriptor del cluster se pueden indicar grupos de nodos worker con las siguientes opciones:
+
+* name: nombre del grupo, no puede repetirse.
+* size: tipo de instancia.
+* quantity: cantidad de workers en el grupo.
+* min_size: número mínimo de nodos para el autoescalado (opcional).
+* max_size: número máximo de nodos para el autoescalado (opcional).
+* labels: labels de los nodos en Kubernetes (opcional).
+* root_volume: particularidades del disco (opcional).
+** size: tamaño en Gb (por defecto: 30Gb).
+** type: tipo de disco (por defecto: gp2).
+** encrypted: cifrado del disco (por defecto: false).
+* ssh_key: clave SSH para acceso a los nodos (opcional).
+* spot: indica si la instancia es de tipo spot (opcional).
+* node_image: Imágen de los nodos worker (opcional). La imágen indicada deberá existir y ser compatible con EKS.
+* zone_distribution: indica si la cantidad de nodos debe quedar balanceada en las zonas o no (por defecto: balanced).
+* az: zona del grupo de workers (opcional). En caso de especificarse, sólamente se utilizará ésta para todo el grupo. Este parámetro invalida lo especificado en zone_distribution.
+
+Nota: Por defecto, el reparto de nodos se hará en las zonas a, b y c de la región indicada de forma balanceada, por lo tanto, el resto de la división por tres de la cantidad de nodos se descartará. Ejemplo: si se indica quantity=7, sólo se desplegarán 2 nodos en cada una de las zonas.
+
+
+=== Consideraciones
+
+* ·En caso de utilizar infraestructura custom, se deberá indicar la VPC y 3 subnets, una por zona de la región (a, b y c).
+* La versión de Kubernetes indicada debe estar soportada por EKS.
+* Los nombres de los grupos de worker_nodes no pueden repetirse.
+
+== Instalación
+
+Una vez descargado el fichero .tgz del cloud-provisioner, procedemos a descomprimirlo y ejecutarlo con los parámetros de creación:
+
+----
+$ tar xvzf cloud-provisioner-*tar.gz
+$ sudo ./bin/cloud-provisioner create cluster --name <cluster_id> --descriptor cluster.yaml
+Creating temporary cluster "stg-eks" ...
+ ✓ Ensuring node image (kindest/node:v1.24.7) 🖼
+ ✓ Building Stratio image (stratio-capi-image:v1.24.7) 📸
+ ✓ Preparing nodes 📦  
+ ✓ Writing configuration 📜 
+ ✓ Starting control-plane 🕹️ 
+ ✓ Installing CNI 🔌 
+ ✓ Installing StorageClass 💾 
+ ✓ Installing CAPx 🎖️ 
+ ✓ Generating workload cluster manifests 📝
+ ✓ Generating secrets file 📝🗝️ 
+ ✓ [CAPA] Ensuring IAM security 👮 
+ ✓ Creating the workload cluster 💥 
+ ✓ Saving the workload cluster kubeconfig 📝 
+ ✓ Preparing nodes in workload cluster 📦 
+ ✓ Enabling workload cluster's self-healing 🏥 
+ ✓ Installing CAPx in workload cluster 🎖️ 
+ ✓ Installing Network Policy Engine in workload cluster 🚧 
+ ✓ Adding Cluster-Autoescaler 🗚 
+ ✓ Moving the management role 🗝️ 
+ ✓ Generating the KEOS descriptor 📝
+ ✓ Cleaning up temporary cluster 🧹 
+
+The cluster has been installed, please refer to Stratio KEOS documentation on how to proceed.
+----
+
+== Siguientes pasos
+
+Una vez instalado el cluster, podremos acceder al APIserver de EKS con el CLI de AWS como lo indica en https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html[la documentación oficial].
+
+----
+$ aws eks update-kubeconfig --region <region> --name <cluster_id> --kubeconfig ./<cluster_id>.kubeconfig
+
+$ kubectl --kubeconfig ./<cluster_id>.kubeconfig get nodes
+----
+
+En este punto se podrán eliminar los permisos de clusterawsadm.json.

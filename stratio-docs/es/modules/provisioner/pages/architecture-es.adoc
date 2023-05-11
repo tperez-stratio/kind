@@ -60,7 +60,11 @@ En un despliegue *por defecto*, se crean los siguientes objetos en AWS (en [silv
 
 === Seguridad
 
-#Accessing the IMDS (only nodes and certain apps) https://snyk.io/blog/hardening-aws-eks-security-rbac-secure-imds-audit-logging/#
+==== Acceso a IMDS en EKS
+
+Dado que los Pods ejecutados en un nodo de AWS pueden impersonar al nodo donde se ejecutan simplemente interactuando con IMDS, se utiliza una política de red global (GlobalNetworkPolicy de Calico) para impedir el acceso a todos los Pods del cluster.
+
+A su vez, se habilita el OIDC provider de EKS para permitir el uso de IAM roles para Service Accounts, asegurando el uso de políticas IAM con mínimos privilegios.
 
 ==== APIserver endpoint access
 
@@ -74,12 +78,23 @@ Este endpoint se publica a internet, y su acceso se restringe con una combinaci�
 
 
 
-==== Seguridad de red
-
-#Calico + kyverno !#
-
-Accessing the IMDS (only nodes and certain apps) https://snyk.io/blog/hardening-aws-eks-security-rbac-secure-imds-audit-logging/
-
 === Storage
 
+==== Nodos
 
+A nivel de Storage, se monta un único disco root del que podemos definir su tipo, tamaño y encriptación.
+
+_Ejemplo:_
+
+----
+type: gcp2
+size: 384Gi
+encrypted: true
+----
+
+Estos discos se crean en la provisión inicial de los nodos workers, por lo que estos datos se pasan como parámetros del descriptor.
+
+==== StorageClass
+
+Por defecto, el cluster disponibiliza una StorageClass (gcp2) para disco EBS con filesystem ext4. Esta StorageClass se crea con _reclaimPolicy: Delete_ y
+  _volumeBindingMode: WaitForFirstConsumer_, esto es, que el disco se creará en el momento que un Pod consuma el PersistentVolumeClaim correspondiente, y que se eliminará al borrar el PersistentVolume.
