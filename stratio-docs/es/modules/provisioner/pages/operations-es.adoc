@@ -31,11 +31,26 @@ ls ./.kube/config
 
 == Operación del cluster
 
+image::controllers.png[]
+
 Utilizando los objetos del apartado anterior, Stratio KEOS nos permite realizar las siguientes operaciones interactuando únicamente con el APIserver.
 
 Serán los controllers desplegados quienes, en los ciclos de reconciliación, realizarán las tareas necesarias.
 
+=== CRDs
+
+image::crds.png[]
+
+Para la gestión APIficada del cluster, se crean los siguientes grupos de objetos:
+
+- Para la definición de los nodos workers se utilizarán MachineDeployment, EKSConfigTemplate y AWSMachineTemplate.
+- Para definir parámetros del control-plane (EKS), utilizaremos el objeto AWSManagedControlPlane.
+- Para indicar los parámetros del self-healing, se utiliza un MachineHealthCheck para todo el cluster.
+
+
 === Self-healing
+
+image::self-healing.png[]
 
 La capacidad de self-healing del cluster es gestionada por el objeto MachineHealthCheck:
 
@@ -79,6 +94,8 @@ Si bien el escalado manual es desaconsejable, se presentan estas operaciones par
 
 ==== Escalar un grupo de workers
 
+image::escalado-manual.png[]
+
 Para escalar manualmente un grupo de workers hacemos uso del objeto MachineDeployment, que soporta el comando scale de kubectl:
 
 kubectl -n cluster-stg-eks scale --replicas 3 MachineDeployment --all
@@ -115,6 +132,8 @@ Para ver los objetos creados:
 kubectl -n cluster-example get md,gcpmachinetemplate,kubeadmconfigtemplate
 
 === Autoescalado
+
+image::autoescalado.png[]
 
 Para el autoescalado de nodos, se utiliza cluster-autoscaler, quien detectará Pods pendientes de ejecutar por falta de recursos y escalará el grupo de nodos que considere según los filtros de los despliegues.
 
@@ -162,11 +181,15 @@ La actualización del cluster a una versión superior de Kubernetes se realizar�
 
 ==== Control Plane
 
+image::upgrade-cp.png[]
+
 Para la actualización del control-plane, ejecutaremos un patch de spec.version en el objeto AWSManagedControlPlane.
 
 $ kubectl -n cluster-example patch AWSManagedControlPlane example-control-plane --type merge -p '{"spec": {"version": "v1.24.0"}}'
 
 ==== Workers
+
+image::upgrade-w.png[]
 
 Para cada grupo de nodos workers del cluster, ejecutaremos un patch de spec.template.spec.version en el objeto MachineDeployment correspondiente al grupo.
 
