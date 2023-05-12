@@ -10,7 +10,6 @@
 
 Versión 0.1.0
 
-
 == Obtención del kubeconfig
 
 ===== [EKS]
@@ -130,6 +129,32 @@ kubectl apply -f xref:./example-gcp-md.yaml[example-gcp-md.yaml]
 Para ver los objetos creados:
 
 kubectl -n cluster-example get md,gcpmachinetemplate,kubeadmconfigtemplate
+
+==== Escalado vertical
+
+El escalado vertical de un grupo de nodos puede realizarse de varias formas, todas ellas comenzarán por cambiar el tipo de instancia del objeto <infra-controller>MachineTemplate.
+
+A pesar de que oficialmente se indica que se cree un nuevo <infra-controller>MachineTemplate, y se referencie desde el MachineDeployment, no recomendamos esta opción porque impide mantener la consistencia de nombres entre los objetos que gestionan los grupos de nodos.
+
+El métido recomendado se basa en 3 simples pasos:
+
+1. Indicar el nuevo tipo de instancia en <infra-controller>MachineTemplate (_spec.template.spec.instanceType_).
+2. Obtener la version del nuevo objeto <infra-controller>MachineTemplate (_metadata.resourceVersion_).
+3. Editar el MachineDeployment actualizando la versión obtenida en el paso anterior (_spec.template.spec.infrastructureRef.resourceVersion_).
+ 
+Como ejemplo, para un cluster de EKS se haría de la siguiente forma:
+
+----
+export MACHINE_TYPE="t3.medium"
+export MACHINE_DEPLOYMENT="stg-eks-xlarge-md-2"
+export NAMESPACE="cluster-stg-eks"
+
+$ k -n $NAMESPACE patch awsmt $MACHINE_DEPLOYMENT --type merge -p "{\"spec\": {\"template\": {\"spec\": {\"instanceType\": "$MACHINE_TYPE"}}}}"
+
+$ RESOURCE_VERSION=$(k -n $NAMESPACE get awsmt $MACHINE_DEPLOYMENT -o json | jq -r .metadata.resourceVersion)
+
+$ k -n $NAMESPACE patch md $MACHINE_DEPLOYMENT --type merge -p "{\"spec\": {\"template\": {\"spec\": {\"infrastructureRef\": {\"resourceVersion\": \"$RESOURCE_VERSION\"}}}}}"
+----
 
 === Autoescalado
 
