@@ -2,6 +2,7 @@ FROM kindest/node:v1.24.7
 
 # Init feature gates
 ENV CLUSTER_TOPOLOGY=true
+ENV CLUSTERCTL_DISABLE_VERSIONCHECK=true
 
 # Tools versions
 ENV CLUSTERCTL=v1.3.2
