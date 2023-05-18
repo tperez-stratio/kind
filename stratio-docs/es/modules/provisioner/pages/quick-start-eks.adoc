@@ -10,7 +10,7 @@ Versión: 0.1.0
 * Usuario con los privilegios necesarios en AWS.
 ** Crear usuario para la instalacion.
 ** Crear política según xref:./stratio-eks-policy.json[stratio-eks-policy.json].
-** Crear política según xref:./stratio-eks-temp-policy.json[stratio-temp-policy.json] (sólo para la instalación).
+** Crear política según xref:./stratio-eks-temp-policy.json[stratio-temp-policy.json] (sólo para el aprovisionamiento).
 ** Adjuntar políticas al usuario.
 ** Crear una Access key.
 
@@ -19,7 +19,7 @@ Versión: 0.1.0
 * Infra custom creada en AWS (opcional).
 
 * Componer el fichero descriptor del cluster.
-** Credenciales del usuario (access_key y secret_key) y datos de la cuenta (región y account_id), que se cifrarán en la primer ejecución.
+** Credenciales del usuario (access_key y secret_key) y datos de la cuenta (región y account_id), que se cifrarán en la primera ejecución.
 ** Token de Github para descarga de templates.
 ** Datos de la cuenta (región y account_id).
 ** Datos de la infraestructura ya creada (opcional).
@@ -59,12 +59,11 @@ Nota: Por defecto, el reparto de nodos se hará en las zonas a, b y c de la regi
 
 === keos-installer
 
-A modo de facilitar la instalación de _Stratio KEOS_, en el proceso de provisión se genera un fichero keos.yaml funcional y listo para poder lanzar la instalación. Para ello, en el descriptor del cluster podremos indicar la versión y flavour (production, development o minimal). El dominio interno del cluster no deberá ser modificado ya que EKS no permite otro.
+A modo de facilitar la instalación de _Stratio KEOS_, en el proceso de provisión se genera un fichero keos.yaml funcional y listo para poder lanzar la instalación. Para ello, en el descriptor del cluster podremos indicar la versión y flavour (production, development o minimal).
 
 ----
   keos:
     version: 0.8.1
-    domain: cluster.local
     flavour: development
 ----
 
