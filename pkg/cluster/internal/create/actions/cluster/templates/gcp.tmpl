@@ -145,7 +145,7 @@ spec:
   template:
     spec:
       instanceType: "{{ .Descriptor.ControlPlane.Size }}"
-      image: "{{ .Descriptor.ControlPlane.Image }}"
+      image: "{{ .Descriptor.ControlPlane.NodeImage }}"
       {{- if .Descriptor.ControlPlane.RootVolume.Size }}
       rootDeviceSize: {{ .Descriptor.ControlPlane.RootVolume.Size }}
       {{- end }}
@@ -187,7 +187,7 @@ spec:
     spec:
       clusterName: "{{ $.Descriptor.ClusterID }}"
       version: "{{ $.Descriptor.K8SVersion }}"
-      failureDomain: "{{- if $node.AZ -}} {{ $n.AZ }} {{- else -}} {{ $.Descriptor.Region }}-{{ $n.AZ }} {{- end }}"
+      failureDomain: "{{ $n.AZ }}"
       bootstrap:
         configRef:
           name: "{{ $node.Name }}-md-{{ $index }}"
@@ -207,7 +207,7 @@ spec:
   template:
     spec:
       instanceType: "{{ $node.Size }}"
-      image: "{{ $node.Image }}"
+      image: "{{ $node.NodeImage }}"
       {{- if $node.RootVolume.Size }}
       rootDeviceSize: {{ $node.RootVolume.Size }}
       {{- end }}
