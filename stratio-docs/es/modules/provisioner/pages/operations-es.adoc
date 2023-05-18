@@ -230,12 +230,12 @@ Previo a la eliminación de los recusos del _cloud provider_ generados por el cl
 . Creamos un cluster local indicando que no se genere ningún objeto en el _cloud provider_.
 
 -----
-[local]$ sudo ./bin/cloud-provisioner create cluster --name prod-eks --descriptor cluster.yaml --vault-password <my-passphrase> --avoid-creation
+[local]$ sudo ./bin/cloud-provisioner create cluster --name prod-cluster --descriptor cluster.yaml --vault-password <my-passphrase> --avoid-creation
 
 -----
 
 [start=2]
-. Movemos el management del cluster worker al cluster local, utilizando el kubeconfig de EKS.
+. Movemos el management del cluster worker al cluster local, utilizando el kubeconfig correspondiente (nótese que para los control-planes gestionados necesitaremos el kubeconfig del provider). Para asegurar este paso, buscaremos el siguiente texto en la salida del comando: *Moving Cluster API objects Clusters=1*.
 
 -----
 [local]$ sudo clusterctl --kubeconfig $KUBECONFIG move -n cluster-prod-eks --to-kubeconfig /root/.kube/config

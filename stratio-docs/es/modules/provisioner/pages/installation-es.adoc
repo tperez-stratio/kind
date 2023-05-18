@@ -23,6 +23,7 @@ Para el aprovisionamiento automatizado en EKS, se necesita ejecutar acciones sob
 Si bien la utilización o no de estas acciones dependerá del tipo de instalación, el provisioner valida que el usuario indicado tenga estos permisos para poder ejecutarse con normalidad.
 
 xref:./stratio-eks-policy.json[Descargar permisos permanentes para EKS]
+
 xref:./stratio-eks-temp-policy.json[Descargar permisos temporales para EKS]
 
 * Sistemas Operativos certificados
@@ -195,7 +196,7 @@ En este apartado se indican las particularidades para el control plane de Kubern
 ^|Nombre ^|Descripción ^|Ejemplo ^|Opcional
 
 |aws
-|Valores específicos para el loggin de EKS.
+|Valores específicos para el loggin de EKS (apiserver, audit, authenticator, controller_manager y/o scheduler).
 a|
 [.small]
 ----
