@@ -39,7 +39,7 @@ En un despliegue *por defecto*, se crean los siguientes objetos en AWS (en [silv
 ** 1 Volúmen EBS por VM.
 * 1 Load Balancer tipo Network para exposición de servicios.
 ** 1 Listener por puerto para cada Service tipo LB.
-* Vólumen EBS para cada PV.
+* Volúmen EBS para cada PV.
 
 ===== [GCP]
 
@@ -56,7 +56,7 @@ En un despliegue *por defecto*, se crean los siguientes objetos en AWS (en [silv
 ** 1 Volúmen EBS por VM.
 * 1 Load Balancer L4 para exposición de servicios.
 ** 1 Listener por puerto para cada Service tipo LB.
-* Vólumen EBS para cada PV.
+* Volúmen EBS para cada PV.
 
 === Seguridad
 

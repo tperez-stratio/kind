@@ -138,7 +138,7 @@ A pesar de que oficialmente se indica que se cree un nuevo <infra-controller>Mac
 
 El métido recomendado se basa en 3 simples pasos:
 
-1. Indicar el nuevo tipo de instancia en <infra-controller>MachineTemplate (_spec.template.spec.instanceType_).
+1. Indicar el nuevo tipo de instancia en <infra-controller>MachineTemplate (_spec.template.spec.instanceType_). En algunos providers, este objeto deberá eliminarse y volver a crearse.
 2. Obtener la version del nuevo objeto <infra-controller>MachineTemplate (_metadata.resourceVersion_).
 3. Editar el MachineDeployment actualizando la versión obtenida en el paso anterior (_spec.template.spec.infrastructureRef.resourceVersion_).
  
