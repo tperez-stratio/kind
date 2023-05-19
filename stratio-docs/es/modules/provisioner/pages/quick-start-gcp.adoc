@@ -5,7 +5,7 @@
 
 Versión: 0.1.0
 
-== Prerrequisitos:
+== Prerrequisitos en el cloud provider:
 
 * Crear una IAM Service Account con los permisos definidos en xref:./stratio-gcp-permissions.list[stratio-gcp-permissions.list].
 * Crear una clave privada para la IAM Service Account de tipo JSON y descargarla en un fichero _<project_name>-<id>.json_. Estos datos se utilizarán para las credenciales solicitadas en el descriptor del cluster.
@@ -83,6 +83,8 @@ Para cualquier personalización extra, deberá modificarse el fichero antes de e
 
 == Instalación
 
+Esta fase (aprovisionamiento e instalación de Kubernetes), deberá ejecutarse desde una máquina Linux con acceso a internet y Docker instalado. 
+
 Una vez descargado el fichero .tgz del cloud-provisioner, procedemos a descomprimirlo y ejecutarlo con los parámetros de creación:
 
 ----
@@ -116,9 +118,11 @@ The cluster has been installed, please refer to Stratio KEOS documentation on ho
 
 == Siguientes pasos
 
-Una vez instalado el cluster, podremos acceder al APIserver con el kubeconfig generado en el directorio actual (.kube/config):
+En este punto, tendremos un cluster de Kubernetes con las características indicadas en el descriptor, y podremos acceder al APIserver con el kubeconfig generado en el directorio actual (.kube/config):
 
 ----
 $ kubectl --kubeconfig .kube/config get nodes
 ----
+
+A continuación procederemos a desplegar _Stratio KEOS_ utilizando el *keos-installer*.
 

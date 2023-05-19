@@ -5,7 +5,7 @@
 
 Versión: 0.1.0
 
-== Prerrequisitos:
+== Prerrequisitos en el cloud provider:
 
 * Usuario con los privilegios necesarios en AWS.
 ** Crear usuario para la instalacion.
@@ -77,6 +77,8 @@ Para cualquier personalización extra, deberá modificarse el fichero antes de e
 
 == Instalación
 
+Esta fase (aprovisionamiento e instalación de Kubernetes), deberá ejecutarse desde una máquina Linux con acceso a internet y Docker instalado. 
+
 Una vez descargado el fichero .tgz del cloud-provisioner, procedemos a descomprimirlo y ejecutarlo con los parámetros de creación:
 
 ----
@@ -111,7 +113,7 @@ The cluster has been installed, please refer to Stratio KEOS documentation on ho
 
 == Siguientes pasos
 
-Una vez instalado el cluster, podremos acceder al APIserver de EKS con el CLI de AWS como lo indica en https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html[la documentación oficial].
+En este punto, tendremos un cluster de Kubernetes con las características indicadas en el descriptor, y podremos acceder al APIserver de EKS con el CLI de AWS como lo indica en https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html[la documentación oficial].
 
 ----
 $ aws eks update-kubeconfig --region <region> --name <cluster_id> --kubeconfig ./<cluster_id>.kubeconfig
@@ -120,3 +122,5 @@ $ kubectl --kubeconfig ./<cluster_id>.kubeconfig get nodes
 ----
 
 En este punto se podrán eliminar los permisos de clusterawsadm.json.
+
+A continuación procederemos a desplegar _Stratio KEOS_ utilizando el *keos-installer*.

@@ -29,7 +29,7 @@ ls ./.kube/config
 ./.kube/config
 -----
 
-== Operación del cluster
+== Operación de la infraestructura
 
 image::controllers.png[]
 
