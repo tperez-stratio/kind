@@ -374,7 +374,6 @@ spec:
       node_image:  ami-0de933c15c9b49fb5
   external_domain: domain.ext
   keos:
-    domain: cluster.local
     flavour: production
     version: 0.8.2
 ---
