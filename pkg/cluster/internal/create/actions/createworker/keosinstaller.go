@@ -51,7 +51,7 @@ type KEOSDescriptor struct {
 		} `yaml:"dns,omitempty"`
 		Domain          string `yaml:"domain,omitempty"`
 		ExternalDomain  string `yaml:"external_domain,omitempty"`
-		Flavour         string `yaml:"flavour"`
+		Flavour         string `yaml:"flavour,omitempty"`
 		K8sInstallation bool   `yaml:"k8s_installation"`
 		Storage         struct {
 			DefaultStorageClass string   `yaml:"default_storage_class"`
@@ -96,7 +96,9 @@ func createKEOSDescriptor(descriptorFile cluster.DescriptorFile, storageClass st
 	if descriptorFile.ExternalDomain != "" {
 		keosDescriptor.Keos.ExternalDomain = descriptorFile.ExternalDomain
 	}
-	keosDescriptor.Keos.Flavour = descriptorFile.Keos.Flavour
+	if descriptorFile.Keos.Flavour != "" {
+		keosDescriptor.Keos.Flavour = descriptorFile.Keos.Flavour
+	}
 
 	// Keos - Calico
 	if !descriptorFile.ControlPlane.Managed {
