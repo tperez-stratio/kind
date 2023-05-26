@@ -71,7 +71,7 @@ spec:
 
 El spec del KeosCluster está compuesto por los siguientes campos:
 
-[cols="1,4,1,1"]
+[cols="1,4,2,1"]
 |===
 ^|Nombre ^|Descripción ^|Ejemplo ^|Opcional
 
@@ -98,6 +98,11 @@ El spec del KeosCluster está compuesto por los siguientes campos:
 |region
 |Región del _cloud provider_ usada para el aprovisionamiento.
 |eu-west-1
+|No
+
+|docker_registries
+|Registries de Docker accesibles por los nodos.
+|-
 |No
 
 |<<networks,networks>>
@@ -137,7 +142,7 @@ En posteriores ejecuciones, simplemente se solicita la passphrase para desencrip
 
 Los siguientes campos son considerados secretos del aprovisionamiento:
 
-[cols="1,4,1,1"]
+[cols="1,4,2,1"]
 |===
 ^|Nombre ^|Descripción ^|Ejemplo ^|Opcional
 
@@ -157,7 +162,7 @@ Los siguientes campos son considerados secretos del aprovisionamiento:
 |No
 
 |docker_registries
-|Registries de Docker accesibles por los nodos.
+|Registries de Docker accesibles por los nodos. Para EKS no hace falta autenticación ya que se hace automáticamente con las credenciales del usuario.
 |-
 |Si
 
@@ -171,7 +176,7 @@ Tanto el VPC como las subnets deberán estar creadas en el _cloud provider_. Las
 
 _Stratio KEOS_ no gestionará el ciclo de vida de los objetos creados previamente.
 
-[cols="1,4,1,1"]
+[cols="1,4,2,1"]
 |===
 ^|Nombre ^|Descripción ^|Ejemplo ^|Opcional
 
@@ -182,7 +187,12 @@ _Stratio KEOS_ no gestionará el ciclo de vida de los objetos creados previament
 
 |subnets
 |Array de subnet's IDs.
-|- subnet_id: subnet-0df75719e234f6615
+a|
+[.small]
+----
+- subnet_id: subnet-0df..
+- subnet_id: subnet-887..
+----
 |Si
 
 |===
@@ -191,7 +201,7 @@ _Stratio KEOS_ no gestionará el ciclo de vida de los objetos creados previament
 
 En este apartado se indican las particularidades para el control plane de Kubernetes.
 
-[cols="1,4,1,1"]
+[cols="1,4,2,1"]
 |===
 ^|Nombre ^|Descripción ^|Ejemplo ^|Opcional
 
@@ -218,7 +228,7 @@ En este apartado se especifican los grupos de nodos worker y sus característica
 
 Las imágenes utilizadas deberán estar soportadas por EKS (ver https://repost.aws/knowledge-center/eks-custom-linux-ami[creación de AMI personalizadas]).
 
-[cols="1,4,1,1"]
+[cols="1,4,2,1"]
 |===
 ^|Nombre ^|Descripción ^|Ejemplo ^|Opcional
 
@@ -291,7 +301,7 @@ root_volume:
 
 Los parámetros para la fase del keos-installer se indicarán en este apartado.
 
-[cols="1,4,1,1"]
+[cols="1,4,2,1"]
 |===
 ^|Nombre ^|Descripción ^|Ejemplo ^|Opcional
 
@@ -309,6 +319,13 @@ Los parámetros para la fase del keos-installer se indicarán en este apartado.
 
 ==== Ejemplo de descriptor
 
+En este ejemplo se pueden ver las siguientes particulares:
+
+- Cluster en AWS con control-plane gestionado (EKS)
+- 
+
+===== [EKS]
+
 [.small]
 ----
 ---
@@ -320,33 +337,28 @@ spec:
   credentials:
     aws:
       region: eu-west-1
-      access_key: access_key
+      access_key: AKIAT4..
       account: '328367555918'
-      secret_key: secret_key
+      secret_key: wq3/Vsc..
     github_token: github_pat_11APW..
   k8s_version: v1.24.15
   region: eu-west-1
   networks:
-    vpc_id: vpc-0264503b8761ff69f
+    vpc_id: vpc-02698..
     subnets:
-      - subnet_id: subnet-0416da6767f911229
-      - subnet_id: subnet-0b2f81b89456dfdfd
-      - subnet_id: subnet-0df75719e234f6615
+      - subnet_id: subnet-0416d..
+      - subnet_id: subnet-0b2f8..
+      - subnet_id: subnet-0df75..
   docker_registries:
-    - url: 268367799111.dkr.ecr.eu-west-1.amazonaws.com/keos
+    - url: AABBCC.dkr.ecr.eu-west-1.amazonaws.com/keos
       auth_required: false
       type: ecr
       keos_registry: true
-    - auth_required: true
-      url: XXYYZZ.dkr.ecr.eu-west-1.amazonaws.com/keos
   control_plane:
     aws:
       logging:
         api_server: true
     managed: true
-    node_image:  ami-0de933c15c9b49fb5
-    highly_available: true
-    size: t3.medium
   worker_nodes:
     - name: eks-prod-xlarge
       quantity: 6
@@ -357,7 +369,7 @@ spec:
         disktype: standard
       root_volume:
         size: 50
-        type: gp2
+        type: gp3
         encrypted: true
       ssh_key: stg-key
     - name: eks-prod-medium-spot
@@ -374,8 +386,83 @@ spec:
       node_image:  ami-0de933c15c9b49fb5
   external_domain: domain.ext
   keos:
+    domain: cluster.local
     flavour: production
-    version: 0.8.2
+    version: 0.8.1
+---
+----
+
+===== [GCP]
+
+[.small]
+----
+---
+apiVersion: installer.stratio.com/v1beta1
+kind: KeosCluster
+spec:
+  cluster_id: eks-prod
+  infra_provider: aws
+  credentials:
+    aws:
+      region: eu-west-1
+      access_key: access_key
+      account: '328367555918'
+      secret_key: secret_key
+    github_token: github_pat_11APW..
+    docker_registries:
+      - url: XXYYZZ.dkr.ecr.region.amazonaws.com/keos
+        user: "myuser"
+        pass: "mypass"
+  k8s_version: v1.24.15
+  region: eu-west-1
+  networks:
+    vpc_id: vpc-0264503b8761ff69f
+    subnets:
+      - subnet_id: subnet-0416da6767f911229
+      - subnet_id: subnet-0b2f81b89456dfdfd
+      - subnet_id: subnet-0df75719e234f6615
+  docker_registries:
+    - url: AABBCC.dkr.ecr.eu-west-1.amazonaws.com/keos
+      auth_required: false
+      type: ecr
+      keos_registry: true
+    - auth_required: true
+      url: XXYYZZ.dkr.ecr.eu-west-1.amazonaws.com/keos
+  control_plane:
+    aws:
+      logging:
+        api_server: true
+    managed: true
+  worker_nodes:
+    - name: eks-prod-xlarge
+      quantity: 6
+      max_size: 18
+      min_size: 6
+      size: m6i.xlarge
+      labels:
+        disktype: standard
+      root_volume:
+        size: 50
+        type: gp3
+        encrypted: true
+      ssh_key: stg-key
+    - name: eks-prod-medium-spot
+      quantity: 4
+      zone_distribution: unbalanced
+      size: t3.medium
+      spot: true
+      labels:
+        disktype: standard
+    - name: eks-prod-medium-az
+      quantity: 3
+      size: t3.medium
+      az: eu-west-1c
+      node_image:  ami-0de933c15c9b49fb5
+  external_domain: domain.ext
+  keos:
+    domain: cluster.local
+    flavour: production
+    version: 0.8.1
 ---
 ----
 
@@ -423,7 +510,4 @@ The cluster has been installed, please refer to Stratio KEOS documentation on ho
 -----
 
 Una vez finalizado el proceso, tendremos los ficheros necesarios (keos.yaml y secrets.yml) para instalar KEOS.
-
-
-
 

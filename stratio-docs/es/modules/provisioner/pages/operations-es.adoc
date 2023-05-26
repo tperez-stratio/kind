@@ -12,6 +12,8 @@ Versión 0.1.0
 
 == Obtención del kubeconfig
 
+Para comunicarnos con el APIserver del cluster creado, necesitaremos el fichero kubeconfig. Éste fichero se obtendrá de forma diferente según el cloud provider utilizado y la gestión del control-plane del cluster.
+
 ===== [EKS]
 
 Para EKS, obtenemos el _kubeconfig_ de la forma indicada por AWS:
