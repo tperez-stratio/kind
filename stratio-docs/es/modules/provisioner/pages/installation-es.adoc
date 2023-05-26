@@ -323,7 +323,7 @@ Se presentan dos casos de descriptor para demostrar la capacidad del cloud-provi
 
 ===== [EKS]
 
-En este ejemplo se pueden ver las siguientes particulares:
+En este ejemplo se pueden ver las siguientes particularidades:
 
 * Cluster en AWS con control-plane gestionado (EKS).
 * Kubernetes versión 1.24.x (EKS no tiene en cuenta la _patch version_).
@@ -409,7 +409,7 @@ spec:
 
 ===== [GCP]
 
-En este ejemplo se pueden ver las siguientes particulares:
+En este ejemplo se pueden ver las siguientes particularidades:
 
 * Cluster en GCP con control-plane no-gestionado.
 * Uso de un Docker registry autenticado genérico (con sus credenciales).
