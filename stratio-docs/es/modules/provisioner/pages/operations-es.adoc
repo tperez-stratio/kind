@@ -12,6 +12,8 @@ Versión 0.1.0
 
 == Obtención del kubeconfig
 
+Para comunicarnos con el APIserver del cluster creado, necesitaremos el fichero kubeconfig. Éste fichero se obtendrá de forma diferente según el cloud provider utilizado y la gestión del control-plane del cluster.
+
 ===== [EKS]
 
 Para EKS, obtenemos el _kubeconfig_ de la forma indicada por AWS:
@@ -28,6 +30,23 @@ Al finalizar el aprovisionamiento, el _kubeconfig_ se deja en el directorio de e
 ls ./.kube/config
 ./.kube/config
 -----
+
+== Autenticación en EKS
+
+Si bien no forma parte de la operativa de _Stratio KEOS_ propiamente dicha, es importante resaltar la forma de permitir la https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html[autenticación de otros usuarios en un cluster de EKS] (el usuario creador del cluster está autenticado por defecto).
+
+Para dar permisos de kubernetes-admin en el cluster, agregaremos el ARN del usuario en el ConfigMap indicado a continuación.
+
+----
+$ k -n kube-system edit cm aws-auth
+..
+data:
+  mapUsers: |
+    - groups:
+      - system:masters
+      userarn: <user_arn>
+      username: kubernetes-admin
+----
 
 == Operación de la infraestructura
 
