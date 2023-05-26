@@ -91,7 +91,7 @@ El spec del KeosCluster está compuesto por los siguientes campos:
 |No en 1a ejecución
 
 |k8s_version
-|Versión de Kubernetes del cluster. Debe estar alineada tanto con EKS como con _Stratio KEOS_.
+|Versión de Kubernetes del cluster. Debe estar alineada tanto con el _cloud provider_ como con _Stratio KEOS_. [underline]#Nota#: EKS no tiene en cuenta la _patch version_.
 |v1.24.10
 |No
 
@@ -157,7 +157,7 @@ Los siguientes campos son considerados secretos del aprovisionamiento:
 |No cuando infra_provider=gcp
 
 |github_token
-|Token de Github.
+|Token de Github. Se puede utilizar un _Fine-grained token_ o un token tipo _classic_, y no necesita ningún permiso. Para generarlo ir a: Settings -> Developer settings -> Personal access tokens.
 |github_pat_11APW..
 |No
 
@@ -321,8 +321,10 @@ Los parámetros para la fase del keos-installer se indicarán en este apartado.
 
 En este ejemplo se pueden ver las siguientes particulares:
 
-- Cluster en AWS con control-plane gestionado (EKS)
-- 
+- Cluster en AWS con control-plane gestionado (EKS).
+- Uso de ECR como Docker registry (sin credenciales).
+- Uso de VPC y subnets custom (creadas anteriormente). Este apartado no es obligatorio.
+- Hay 3 grupos de nodos workers:
 
 ===== [EKS]
 
@@ -338,7 +340,7 @@ spec:
     aws:
       region: eu-west-1
       access_key: AKIAT4..
-      account: '328367555918'
+      account: '3683675..'
       secret_key: wq3/Vsc..
     github_token: github_pat_11APW..
   k8s_version: v1.24.15
