@@ -49,7 +49,7 @@ type KEOSDescriptor struct {
 				Enabled *bool `yaml:"enabled,omitempty"`
 			} `yaml:"external_dns,omitempty"`
 		} `yaml:"dns,omitempty"`
-		Domain          string `yaml:"domain,omitempty"`
+		Domain          string `yaml:"domain"`
 		ExternalDomain  string `yaml:"external_domain,omitempty"`
 		Flavour         string `yaml:"flavour,omitempty"`
 		K8sInstallation bool   `yaml:"k8s_installation"`
@@ -88,11 +88,7 @@ func createKEOSDescriptor(descriptorFile cluster.DescriptorFile, storageClass st
 
 	// Keos
 	keosDescriptor.Keos.ClusterID = descriptorFile.ClusterID
-        if descriptorFile.InfraProvider == "aws" {
-                keosDescriptor.Keos.Domain = "cluster.local"
-        } else if descriptorFile.Keos.Domain != "" {
-                keosDescriptor.Keos.Domain = descriptorFile.Keos.Domain
-        }
+	keosDescriptor.Keos.Domain = "cluster.local"
 	if descriptorFile.ExternalDomain != "" {
 		keosDescriptor.Keos.ExternalDomain = descriptorFile.ExternalDomain
 	}
