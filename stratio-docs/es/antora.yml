@@ -1,7 +1,6 @@
 name: cloud-provisioner
 title: Stratio KEOS in Clouds
 version: '0.1'
-#nav:
-#- modules/ROOT/nav.adoc
-start_page: cloud-provisioner-index-es.adoc
-
+nav:
+- modules/ROOT/nav.adoc
+start_page: introduction.adoc

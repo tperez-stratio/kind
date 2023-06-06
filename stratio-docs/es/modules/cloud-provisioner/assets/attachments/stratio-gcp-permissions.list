@@ -66,4 +66,3 @@ compute.zones.list
 iam.serviceAccounts.actAs
 monitoring.timeSeries.create
 resourcemanager.projects.get
-
