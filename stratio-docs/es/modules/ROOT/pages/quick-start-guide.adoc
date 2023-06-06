@@ -64,7 +64,7 @@ Para cualquier personalización extra, deberá modificarse el fichero antes de e
 * La versión de Kubernetes indicada debe estar soportada por EKS.
 * Los nombres de los grupos de _worker$$_$$nodes_ no pueden repetirse.
 
-TIP: Para más detalles, consulta la xref:cloud-provisioner:installation.adoc[guía de instalación].
+TIP: Para más detalles, consulta la xref:ROOT:installation.adoc[guía de instalación].
 
 === Instalación
 
@@ -191,7 +191,7 @@ Para cualquier personalización extra, deberá modificarse el fichero antes de e
 * La versión de Kubernetes configurada debe ser la soportada en las imágenes indicadas.
 * Los nombres de los grupos de _worker$$_$$nodes_ no pueden repetirse y deben comenzar con "<nombre del _cluster_>-".
 
-TIP: Para más detalles, consulta la xref:cloud-provisioner:installation.adoc[guía de instalación].
+TIP: Para más detalles, consulta la xref:ROOT:installation.adoc[guía de instalación].
 
 == Instalación
 
