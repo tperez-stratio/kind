@@ -12,7 +12,7 @@ Arquitectura de referencia
 
 image::eks-reference-architecture.png[]
 
-== Objetos del proveedor de _Cloud_
+== Objetos del proveedor del _Cloud_
 
 === EKS
 
