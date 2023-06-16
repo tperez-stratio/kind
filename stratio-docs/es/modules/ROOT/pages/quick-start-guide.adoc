@@ -104,7 +104,7 @@ The cluster has been installed, please refer to _Stratio KEOS_ documentation on 
 
 === Siguientes pasos
 
-En este punto, habrá un _cluster_ de Kubernetes con las características indicadas en el descriptor y se podrá acceder al APIserver de EKS con el CLI de AWS como lo indica en https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html[la documentación oficial].
+En este punto, habrá un _cluster_ de Kubernetes con las características indicadas en el descriptor y se podrá acceder al API Server de EKS con el CLI de AWS como lo indica en https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html[la documentación oficial].
 
 [source,bash]
 ----
@@ -115,7 +115,7 @@ $ kubectl --kubeconfig ./<cluster_id>.kubeconfig get nodes
 
 Aquí, se podrán eliminar los permisos de _clusterawsadm.json_.
 
-A continuación, se procederá a desplegar _Stratio KEOS_ *utilizando el _keos-installer_*.
+A continuación, se procederá a desplegar _Stratio KEOS_ *utilizando _keos-installer_*.
 
 == GCP
 
@@ -237,4 +237,4 @@ En este punto, habrá un _cluster_ de Kubernetes con las características indica
 $ kubectl --kubeconfig .kube/config get nodes
 ----
 
-A continuación, se procederá a desplegar _Stratio KEOS_ *utilizando el keos-installer*.
+A continuación, se procederá a desplegar _Stratio KEOS_ *utilizando keos-installer*.
