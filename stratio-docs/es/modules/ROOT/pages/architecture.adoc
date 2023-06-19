@@ -1,11 +1,3 @@
-:toc: left
-:toclevels: 4
-// Images dir path for AsciidocFX:
-//:imagesdir: stratio-docs/es/modules/provisioner/assets/images
-// Images dir path for GitHub:
-:imagesdir: /stratio-docs/es/modules/provisioner/assets/images
-// Antora does not require the `imagesdir` directive
-
 = Arquitectura
 
 Arquitectura de referencia
