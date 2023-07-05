@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.2.0 (2023-07-03)
+## 0.17.0-0.2.0 (2023-07-05)
 
 * Add clusterAPI capabilities for AKS
 * Add clusterAPI capabilities for Azure VMs
