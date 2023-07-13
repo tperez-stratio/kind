@@ -99,14 +99,14 @@ func verifyFields(descriptor commons.DescriptorFile) error {
 	supportedFields := []string{}
 	switch descriptor.InfraProvider {
 	case "gcp":
-		supportedFields = []string{"type", "provisioned_iops_on_create", "replication_type", "labels"}
-		err := verifyAdditionalFields(params, []string{"Type", "ProvisionedIopsOnCreate", "ReplicationType", "Labels"})
+		supportedFields = []string{"type", "fsType", "provisioned-iops-on-create", "replication-type", "labels"}
+		err := verifyAdditionalFields(params, []string{"Type", "FsType", "ProvisionedIopsOnCreate", "ReplicationType", "Labels"})
 		if err != nil {
 			return errors.New(err.Error() + "Supported fields for " + descriptor.InfraProvider + ": " + strings.Join(supportedFields, ", "))
 		}
 	case "aws":
-		supportedFields = []string{"type", "iopsPerGB", "fsType", "allowAutoIOPSPerGBIncrease", "iops", "throughput", "blockExpress", "blockSize", "labels"}
-		err := verifyAdditionalFields(params, []string{"Type", "IopsPerGB", "FsType", "AllowAutoIOPSPerGBIncrease", "Iops", "Throughput", "BlockExpress", "BlockSize", "Labels"})
+		supportedFields = []string{"type", "iopsPerGB", "fsType", "allowAutoIOPSPerGBIncrease", "iops", "encrypted", "throughput", "blockExpress", "blockSize", "labels"}
+		err := verifyAdditionalFields(params, []string{"Type", "IopsPerGB", "FsType", "AllowAutoIOPSPerGBIncrease", "Iops", "Encrypted", "Throughput", "BlockExpress", "BlockSize", "Labels"})
 		if err != nil {
 			return errors.New(err.Error() + "Supported fields for " + descriptor.InfraProvider + ": " + strings.Join(supportedFields, ", "))
 		}
