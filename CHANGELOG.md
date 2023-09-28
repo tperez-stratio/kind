@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.3.1 (2023-09-27)
+## 0.17.0-0.3.1 (2023-09-28)
 
 * Add status in KeosCluster
 * Bump Azure provider to 1.10.4
