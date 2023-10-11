@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.3.3 (upcoming)
+## 0.17.0-0.3.3 (2023-10-11)
 
 * Add remote command execution retries
 
