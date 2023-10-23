@@ -1,5 +1,9 @@
 = Arquitectura
 
+Arquitectura de referencia:
+
+image::eks-reference-architecture.png[]
+
 == Introducción
 
 image::arq-intro.png[]
@@ -415,6 +419,7 @@ a|
      enablePerformancePlus
      subscriptionID
 ----
+
 |===
 
 En el aprovisionamiento se crean otras _StorageClasses_ (no por defecto) según el proveedor, pero para utilizarlas las cargas de trabajo deberán especificarlas en su despliegue.
