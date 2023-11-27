@@ -65,7 +65,7 @@ NOTE: Por defecto, el reparto de nodos se hará en las zonas a, b y c de la regi
 
 A modo de facilitar la instalación de _Stratio KEOS_, en el proceso de provisión se genera un fichero _keos.yaml_ funcional y listo para poder lanzar la instalación. Para ello, en el descriptor del _cluster_ se podrá indicar la versión y _flavour_ (_production_, _development_ o _minimal_).
 
-[source,bash]
+[source,yaml]
 ----
   keos:
     version: 1.0.2
@@ -88,7 +88,7 @@ Esta fase (aprovisionamiento e instalación de Kubernetes) deberá ejecutarse de
 
 Una vez descargado el fichero `.tgz` del _cloud-provisioner_, se procederá a descomprimirlo y ejecutarlo con los parámetros de creación:
 
-[source,bash]
+[source,console]
 ----
 $ tar xvzf cloud-provisioner-*tar.gz
 $ sudo ./bin/cloud-provisioner create cluster --name <cluster_id> --descriptor cluster.yaml
@@ -128,7 +128,7 @@ The cluster has been installed, please refer to Stratio KEOS documentation on ho
 
 En este punto, habrá un _cluster_ de Kubernetes con las características indicadas en el descriptor y se podrá acceder al _API Server_ con el _kubeconfig_ generado en el directorio actual (_.kube/config_):
 
-[source,bash]
+[source,console]
 ----
 kubectl --kubeconfig .kube/config get nodes
 ----
@@ -187,7 +187,7 @@ NOTE: Por defecto, el reparto de nodos se hará en las zonas a, b y c de la regi
 
 A modo de facilitar la instalación de _Stratio KEOS_, en el proceso de provisión se genera un fichero _keos.yaml_ funcional y listo para poder lanzar la instalación. Para ello, en el descriptor del _cluster_ se podrá indicar la versión y _flavour_ (_production_, _development_ o _minimal_).
 
-[source,bash]
+[source,yaml]
 ----
   keos:
     version: 1.0.2
@@ -210,7 +210,7 @@ Esta fase (aprovisionamiento e instalación de Kubernetes) deberá ejecutarse de
 
 Una vez descargado el fichero `.tgz` del _cloud-provisioner_, se procederá a descomprimirlo y ejecutarlo con los parámetros de creación:
 
-[source,bash]
+[source,console]
 ----
 $ tar xvzf cloud-provisioner-*tar.gz
 $ sudo ./bin/cloud-provisioner create cluster --name <cluster_id> --descriptor cluster.yaml
@@ -246,11 +246,11 @@ The cluster has been installed, please refer to Stratio KEOS documentation on ho
 
 En este punto, habrá un _cluster_ de Kubernetes con las características indicadas en el descriptor y se podrá acceder al _API Server_ de EKS con el CLI de AWS como lo indica en https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html[la documentación oficial].
 
-[source,bash]
+[source,console]
 ----
-$ aws eks update-kubeconfig --region <region> --name <cluster_id> --kubeconfig ./<cluster_id>.kubeconfig
+aws eks update-kubeconfig --region <region> --name <cluster_id> --kubeconfig ./<cluster_id>.kubeconfig
 
-$ kubectl --kubeconfig ./<cluster_id>.kubeconfig get nodes
+kubectl --kubeconfig ./<cluster_id>.kubeconfig get nodes
 ----
 
 Aquí, se podrán eliminar los permisos de _clusterawsadm.json_.
@@ -317,7 +317,7 @@ NOTE: Por defecto, el reparto de nodos se hará en las zonas a, b y c de la regi
 
 A modo de facilitar la instalación de _Stratio KEOS_, en el proceso de provisión se genera un fichero _keos.yaml_ funcional y listo para poder lanzar la instalación. Para ello, en el descriptor del _cluster_ se podrá indicar la versión y _flavour_ (_production_, _development_ o _minimal_).
 
-[source,bash]
+[source,yaml]
 ----
   keos:
     version: 1.0.2
@@ -340,7 +340,7 @@ Esta fase (aprovisionamiento e instalación de Kubernetes) deberá ejecutarse de
 
 Una vez descargado el fichero `.tgz` del _cloud-provisioner_, se procederá a descomprimirlo y ejecutarlo con los parámetros de creación:
 
-[source,bash]
+[source,console]
 ----
 $ tar xvzf cloud-provisioner-*tar.gz
 $ sudo ./bin/cloud-provisioner create cluster --name <cluster_id> --descriptor cluster.yaml
@@ -380,9 +380,9 @@ The cluster has been installed, please refer to Stratio KEOS documentation on ho
 
 En este punto, habrá un _cluster_ de Kubernetes con las características indicadas en el descriptor y se podrá acceder al _API Server_ con el _kubeconfig_ generado en el directorio actual (_.kube/config_):
 
-[source,bash]
+[source,console]
 ----
-$ kubectl --kubeconfig .kube/config get nodes
+kubectl --kubeconfig .kube/config get nodes
 ----
 
 A continuación, se procederá a desplegar _Stratio KEOS_ *utilizando _keos-installer_*.
@@ -446,7 +446,7 @@ NOTE: Por defecto, el reparto de nodos se hará en las zonas a, b y c de la regi
 
 A modo de facilitar la instalación de _Stratio KEOS_, en el proceso de provisión se genera un fichero _keos.yaml_ funcional y listo para poder lanzar la instalación. Para ello, en el descriptor del _cluster_ se podrá indicar la versión y _flavour_ (_production_, _development_ o _minimal_).
 
-[source,bash]
+[source,yaml]
 ----
   keos:
     version: 1.0.2
@@ -469,7 +469,7 @@ Esta fase (aprovisionamiento e instalación de Kubernetes) deberá ejecutarse de
 
 Una vez descargado el fichero `.tgz` del _cloud-provisioner_, se procederá a descomprimirlo y ejecutarlo con los parámetros de creación:
 
-[source,bash]
+[source,console]
 ----
 $ tar xvzf cloud-provisioner-*tar.gz
 $ sudo ./bin/cloud-provisioner create cluster --name <cluster_id> --descriptor cluster.yaml
@@ -508,9 +508,9 @@ The cluster has been installed, please refer to Stratio KEOS documentation on ho
 
 En este punto, habrá un _cluster_ de Kubernetes con las características indicadas en el descriptor y se podrá acceder al _API Server_ con el _kubeconfig_ generado en el directorio actual (_.kube/config_):
 
-[source,bash]
+[source,console]
 ----
-$ kubectl --kubeconfig .kube/config get nodes
+kubectl --kubeconfig .kube/config get nodes
 ----
 
 A continuación, se procederá a desplegar _Stratio KEOS_ *utilizando _keos-installer_*.
@@ -549,7 +549,7 @@ Asimismo, se pueden indicar *grupos de nodos _worker_* con las siguientes opcion
 * _labels_: etiquetas de los nodos en Kubernetes (opcional).
 * _root++_++volume_: particularidades del disco (opcional).
 ** _size_: tamaño en GB (por defecto: 30GB).
-** _type_: tipo de disco (por defecto: gp3).
+** _type_: tipo de disco (por defecto: Managed).
 * _ssh++_++key_: clave SSH para acceso a los nodos (opcional). Debe existir en el proveedor.
 * _spot_: indica si la instancia es de tipo _spot_ (opcional).
 * _node++_++image_: imagen de los nodos _worker_ (opcional). La imagen indicada deberá existir y ser compatible con AKS.
@@ -562,7 +562,7 @@ NOTE: Por defecto, el reparto de nodos se hará en las zonas a, b y c de la regi
 
 A modo de facilitar la instalación de _Stratio KEOS_, en el proceso de provisión se genera un fichero _keos.yaml_ funcional y listo para poder lanzar la instalación. Para ello, en el descriptor del _cluster_ se podrá indicar la versión y _flavour_ (_production_, _development_ o _minimal_).
 
-[source,bash]
+[source,yaml]
 ----
   keos:
     version: 1.0.2
@@ -585,7 +585,7 @@ Esta fase (aprovisionamiento e instalación de Kubernetes), deberá ejecutarse d
 
 Una vez descargado el fichero `.tgz` del _cloud-provisioner_, se procederá a descomprimirlo y ejecutarlo con los parámetros de creación:
 
-[source,bash]
+[source,console]
 ----
 $ tar xvzf cloud-provisioner-*tar.gz
 $ sudo ./bin/cloud-provisioner create cluster --name <cluster_id> --descriptor cluster.yaml
@@ -607,8 +607,6 @@ Creating temporary cluster "example-eks" ...
  ✓ Installing StorageClass in workload cluster 💾
  ✓ Enabling workload cluster's self-healing 🏥
  ✓ Installing CAPx in workload cluster 🎖️
- ✓ Configuring Network Policy Engine in workload cluster 🚧
- ✓ Installing cluster-autoscaler in workload cluster 🗚
  ✓ Installing keos cluster operator in workload cluster 💻
  ✓ Creating cloud-provisioner Objects backup 🗄️
  ✓ Moving the management role 🗝️
@@ -622,9 +620,9 @@ The cluster has been installed, please refer to Stratio KEOS documentation on ho
 
 En este punto, habrá un _cluster_ de Kubernetes con las características indicadas en el descriptor y se podrá acceder al _API Server_ con el _kubeconfig_ generado en el directorio actual (_.kube/config_):
 
-[source,bash]
+[source,console]
 ----
-$ kubectl --kubeconfig .kube/config get nodes
+kubectl --kubeconfig .kube/config get nodes
 ----
 
 A continuación, se procederá a desplegar _Stratio KEOS_ *utilizando _keos-installer_*.
