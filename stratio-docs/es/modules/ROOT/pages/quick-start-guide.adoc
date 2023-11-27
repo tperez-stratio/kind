@@ -92,7 +92,7 @@ Una vez descargado el fichero `.tgz` del _cloud-provisioner_, se procederá a de
 ----
 $ tar xvzf cloud-provisioner-*tar.gz
 $ sudo ./bin/cloud-provisioner create cluster --name <cluster_id> --descriptor cluster.yaml
-Creating temporary cluster "example-eks" ...
+Creating temporary cluster "example-aws" ...
  ✓ Ensuring node image (kindest/node:v1.27.0) 🖼
  ✓ Building Stratio image (stratio-capi-image:v1.27.0) 📸
  ✓ Preparing nodes 📦
@@ -217,8 +217,8 @@ Una vez descargado el fichero `.tgz` del _cloud-provisioner_, se procederá a de
 $ tar xvzf cloud-provisioner-*tar.gz
 $ sudo ./bin/cloud-provisioner create cluster --name <cluster_id> --descriptor cluster.yaml
 Creating temporary cluster "example-eks" ...
- ✓ Ensuring node image (kindest/node:v1.24.7) 🖼
- ✓ Building Stratio image (stratio-capi-image:v1.24.7) 📸
+ ✓ Ensuring node image (kindest/node:v1.27.0) 🖼
+ ✓ Building Stratio image (stratio-capi-image:v1.27.0) 📸
  ✓ Preparing nodes 📦
  ✓ Writing configuration 📜
  ✓ Starting control-plane 🕹️
@@ -349,8 +349,8 @@ Una vez descargado el fichero `.tgz` del _cloud-provisioner_, se procederá a de
 $ tar xvzf cloud-provisioner-*tar.gz
 $ sudo ./bin/cloud-provisioner create cluster --name <cluster_id> --descriptor cluster.yaml
 Creating temporary cluster "example-gcp" ...
- ✓ Ensuring node image (kindest/node:v1.24.7) 🖼
- ✓ Building Stratio image (stratio-capi-image:v1.24.7) 📸
+ ✓ Ensuring node image (kindest/node:v1.27.0) 🖼
+ ✓ Building Stratio image (stratio-capi-image:v1.27.0) 📸
  ✓ Preparing nodes 📦
  ✓ Writing configuration 📜
  ✓ Starting control-plane 🕹️
