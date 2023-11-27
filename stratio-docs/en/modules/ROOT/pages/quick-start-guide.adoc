@@ -14,7 +14,7 @@
 * Custom infrastructure created on AWS (optional).
 * Compose the cluster descriptor file.
 ** User credentials (_access++_++key_ and _secret++_++key_) and account data (region and _account++_++id_), which will be encrypted on first run.
-** GitHub token for downloading templates.
+** GitHub token for downloading templates (optional).
 ** Account data (region and _account++_++id_).
 ** Data of the infrastructure already created (optional).
 ** Management of DNS zones created (optional).
@@ -88,15 +88,16 @@ Creating temporary cluster "example-eks" ...
  ✓ Installing CAPx 🎖️
  ✓ Generating workload cluster manifests 📝
  ✓ Generating secrets file 📝🗝️
- ✓ [CAPA] Ensuring IAM security 👮
+ ✓ Installing keos cluster operator 💻
  ✓ Creating the workload cluster 💥
  ✓ Saving the workload cluster kubeconfig 📝
  ✓ Preparing nodes in workload cluster 📦
  ✓ Installing StorageClass in workload cluster 💾
  ✓ Enabling workload cluster's self-healing 🏥
  ✓ Installing CAPx in workload cluster 🎖️
- ✓ Installing Network Policy Engine in workload cluster 🚧
- ✓ Adding Cluster-Autoescaler 🗚
+ ✓ Configuring Network Policy Engine in workload cluster 🚧
+ ✓ Installing cluster-autoscaler in workload cluster 🗚
+ ✓ Installing keos cluster operator in workload cluster 💻
  ✓ Creating cloud-provisioner Objects backup 🗄️
  ✓ Moving the management role 🗝️
  ✓ Generating the KEOS descriptor 📝
@@ -132,7 +133,7 @@ Next, proceed to deploy _Stratio KEOS_ *using _keos-installer_*.
 * Custom infrastructure created in GCP (optional).
 * Compose the cluster descriptor file.
 ** User credentials (_private++_++key++_++id_, _private++_++key_ and _client++_++email_) and account data (region and _project++_++id_), which will be encrypted on first run.
-** GitHub token for template download.
+** GitHub token for template download (optional).
 ** Data of the already created infrastructure (optional).
 ** Management of DNS zones created (optional).
 ** Docker registry data (URL, credentials).

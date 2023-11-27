@@ -153,7 +153,7 @@ A continuación, se procederá a desplegar _Stratio KEOS_ *utilizando _keos-inst
 * Infraestructura personalizada creada en AWS (opcional).
 * Componer el fichero descriptor del _cluster_.
 ** Credenciales del usuario (_access++_++key_ y _secret++_++key_) y datos de la cuenta (región y _account++_++id_), que se cifrarán en la primera ejecución.
-** Token de GitHub para descargar plantillas.
+** Token de GitHub para descargar plantillas (opcional).
 ** Datos de la cuenta (región y _account++_++id_).
 ** Datos de la infraestructura ya creada (opcional).
 ** Gestión de las zonas DNS creadas (opcional).
@@ -602,13 +602,16 @@ Creating temporary cluster "example-eks" ...
  ✓ Installing CAPx 🎖️
  ✓ Generating workload cluster manifests 📝
  ✓ Generating secrets file 📝🗝️
+ ✓ Installing keos cluster operator 💻
  ✓ Creating the workload cluster 💥
  ✓ Saving the workload cluster kubeconfig 📝
  ✓ Preparing nodes in workload cluster 📦
  ✓ Installing StorageClass in workload cluster 💾
  ✓ Enabling workload cluster's self-healing 🏥
  ✓ Installing CAPx in workload cluster 🎖️
- ✓ Installing Network Policy Engine in workload cluster 🚧
+ ✓ Configuring Network Policy Engine in workload cluster 🚧
+ ✓ Installing cluster-autoscaler in workload cluster 🗚
+ ✓ Installing keos cluster operator in workload cluster 💻
  ✓ Creating cloud-provisioner Objects backup 🗄️
  ✓ Moving the management role 🗝️
  ✓ Generating the KEOS descriptor 📝
