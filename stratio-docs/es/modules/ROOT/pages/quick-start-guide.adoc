@@ -69,7 +69,7 @@ A modo de facilitar la instalación de _Stratio KEOS_, en el proceso de provisi�
 ----
   keos:
     version: 1.0.2
-    flavour: production
+    flavour: development
 ----
 
 Para cualquier personalización extra, deberá modificarse el fichero antes de ejecutar el _keos-installer_.
@@ -193,7 +193,7 @@ A modo de facilitar la instalación de _Stratio KEOS_, en el proceso de provisi�
 ----
   keos:
     version: 1.0.2
-    flavour: production
+    flavour: development
 ----
 
 Para cualquier personalización extra, deberá modificarse el fichero antes de ejecutar el _keos-installer_.
@@ -325,7 +325,7 @@ A modo de facilitar la instalación de _Stratio KEOS_, en el proceso de provisi�
 ----
   keos:
     version: 1.0.2
-    flavour: production
+    flavour: development
 ----
 
 Para cualquier personalización extra, deberá modificarse el fichero antes de ejecutar el _keos-installer_.
@@ -452,7 +452,7 @@ A modo de facilitar la instalación de _Stratio KEOS_, en el proceso de provisi�
 ----
   keos:
     version: 1.0.2
-    flavour: production
+    flavour: development
 ----
 
 Para cualquier personalización extra, deberá modificarse el fichero antes de ejecutar el _keos-installer_.
@@ -568,7 +568,7 @@ A modo de facilitar la instalación de _Stratio KEOS_, en el proceso de provisi�
 ----
   keos:
     version: 1.0.2
-    flavour: production
+    flavour: development
 ----
 
 Para cualquier personalización extra, deberá modificarse el fichero antes de ejecutar el _keos-installer_.

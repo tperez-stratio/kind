@@ -53,7 +53,7 @@ In order to facilitate the installation of _Stratio KEOS_, in the provisioning p
 [source,bash]
 ----
   keos:
-    version: 0.8.1
+    version: 1.0.2
     flavour: development
 ----
 
@@ -185,7 +185,7 @@ In order to facilitate the installation of _Stratio KEOS_, in the provisioning p
 [source,bash]
 ----
   keos:
-    version: 0.8.1
+    version: 1.0.2
     flavour: development
 ----
 
@@ -312,7 +312,7 @@ In order to facilitate the installation of _Stratio KEOS_, in the provisioning p
 [source,bash]
 ----
   keos:
-    version: 0.8.1
+    version: 1.0.2
     flavour: development
 ----
 
@@ -428,7 +428,7 @@ In order to facilitate the installation of _Stratio KEOS_, in the provisioning p
 [source,bash]
 ----
   keos:
-    version: 0.8.1
+    version: 1.0.2
     flavour: development
 ----
 
