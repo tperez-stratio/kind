@@ -271,7 +271,7 @@ A continuación, se procederá a desplegar _Stratio KEOS_ *utilizando _keos-inst
 * Infraestructura personalizada creada en GCP (opcional).
 * Componer el fichero descriptor del _cluster_.
 ** Credenciales del usuario (_private++_++key++_++id_, _private++_++key_ y _client++_++email_) y datos de la cuenta (región y _project++_++id_), que se cifrarán en la primera ejecución.
-** _Token_ de GitHub para la descarga de plantillas.
+** _Token_ de GitHub para la descarga de plantillas (opcional).
 ** Datos de la infraestructura ya creada (opcional).
 ** Gestión de las zonas DNS creadas (opcional).
 ** Datos del _Docker registry_ (URL, credenciales).
@@ -359,15 +359,19 @@ Creating temporary cluster "example-gcp" ...
  ✓ Installing CAPx 🎖️
  ✓ Generating workload cluster manifests 📝
  ✓ Generating secrets file 📝🗝️
+ ✓ Installing keos cluster operator 💻
  ✓ Creating the workload cluster 💥
  ✓ Saving the workload cluster kubeconfig 📝
  ✓ Installing Calico in workload cluster 🔌
- ✓ Installing StorageClass in workload cluster 💾
+ ✓ Installing CSI in workload cluster 💾
+ ✓ Creating Kubernetes RBAC for internal loadbalancing 🔐
  ✓ Preparing nodes in workload cluster 📦
  ✓ Installing StorageClass in workload cluster 💾
  ✓ Enabling workload cluster's self-healing 🏥
  ✓ Installing CAPx in workload cluster 🎖️
- ✓ Adding Cluster-Autoescaler 🗚
+ ✓ Configuring Network Policy Engine in workload cluster 🚧
+ ✓ Installing cluster-autoscaler in workload cluster 🗚
+ ✓ Installing keos cluster operator in workload cluster 💻
  ✓ Creating cloud-provisioner Objects backup 🗄️
  ✓ Moving the management role 🗝️
  ✓ Generating the KEOS descriptor 📝
@@ -486,17 +490,18 @@ Creating temporary cluster "example-azure" ...
  ✓ Installing CAPx 🎖️
  ✓ Generating workload cluster manifests 📝
  ✓ Generating secrets file 📝🗝️
+ ✓ Installing keos cluster operator 💻
  ✓ Creating the workload cluster 💥
  ✓ Saving the workload cluster kubeconfig 📝
  ✓ Installing cloud-provider in workload cluster ☁️
  ✓ Installing Calico in workload cluster 🔌
  ✓ Installing CSI in workload cluster 💾
- ✓ Installing StorageClass in workload cluster 💾
  ✓ Preparing nodes in workload cluster 📦
  ✓ Installing StorageClass in workload cluster 💾
  ✓ Enabling workload cluster's self-healing 🏥
  ✓ Installing CAPx in workload cluster 🎖️
- ✓ Adding Cluster-Autoescaler 🗚
+ ✓ Installing cluster-autoscaler in workload cluster 🗚
+ ✓ Installing keos cluster operator in workload cluster 💻
  ✓ Creating cloud-provisioner Objects backup 🗄️
  ✓ Moving the management role 🗝️
  ✓ Generating the KEOS descriptor 📝
