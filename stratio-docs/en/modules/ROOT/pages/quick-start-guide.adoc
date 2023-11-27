@@ -154,8 +154,7 @@ For this provider, the _control-plane_ will be deployed in VMs, therefore, the f
 * _node++_++image_: image of the nodes of the _control-plane_. The indicated image must exist in the referenced project.
 * _root++_++volume_: disk particularities (optional).
 ** _size_: size in GB (default: 30GB).
-** _type_: disk type (default: gp2).
-** _encrypted_: disk encryption (default: _false_).
+** _type_: disk type (default: pd-standard).
 
 ==== _worker_ nodes
 
@@ -169,8 +168,7 @@ In the cluster descriptor, groups of _worker_ nodes can be indicated with the fo
 * _labels_: node labels in Kubernetes (optional).
 * _root++_++volume_: disk specifics (optional).
 ** _size_: size in GB (default: 30GB).
-** _type_: disk type (default: gp2).
-** _encrypted_: disk encryption (default: _false_).
+** _type_: disk type (default: pd-standard).
 * _ssh++_++key_: SSH key for node access (optional). Must exist in the provider.
 * _spot_: indicates if the instance is of type _spot_ (optional).
 * _node++_++image_: the image of the worker nodes. The indicated image must exist and be compatible with EKS.
@@ -285,8 +283,7 @@ For this provider, the _control-plane_ will be deployed in VMs, therefore, the f
 * _node++_++image_: image of the nodes of the _control-plane_. The indicated image must exist in the account.
 * _root++_++volume_: disk particularities (optional).
 ** _size_: size in GB (default: 30GB).
-** _type_: disk type (default: gp3).
-** _encrypted_: disk encryption (default: _false_).
+** _type_: disk type (default: Standard_LRS).
 
 ==== _worker_ nodes
 
@@ -300,8 +297,7 @@ In the cluster descriptor, groups of _worker_ nodes can be indicated with the fo
 * _labels_: node labels in Kubernetes (optional).
 * _root++_++volume_: disk specifics (optional).
 ** _size_: size in GB (default: 30GB).
-** _type_: disk type (default: gp3).
-** _encrypted_: disk encryption (default: _false_).
+** _type_: disk type (default: Standard_LRS).
 * _ssh++_++key_: SSH key for node access (optional). Must exist in the provider.
 * _spot_: indicates if the instance is of _spot_-type (optional).
 * _node++_++image_: the image of the _worker_ nodes. The indicated image must exist in the account.
@@ -418,7 +414,6 @@ Likewise, it is possible to indicate *groups of _worker_ nodes* with the followi
 ** _root++_++volume_: disk specifics (optional).
 ** _size_: size in GB (default: 30GB).
 ** _type_: disk type (default: gp3).
-** _encrypted_: disk encryption (default: _false_).
 * _ssh++_++key_: SSH key for node access (optional). Must exist in the provider.
 * _spot_: indicates if the instance is of _spot_-type (optional).
 * _node++_++image_: the image of the _worker_ nodes (optional). The indicated image must exist and be compatible with AKS.
