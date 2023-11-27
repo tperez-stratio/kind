@@ -208,7 +208,7 @@ spec:
 
 === Autoscaling
 
-image::autoscaling.png[]
+image::autoescalado.png[]
 
 For node autoscaling, _cluster-autoscaler_ is used, which will detect pods pending execution due to lack of resources and will scale groups of nodes according to the deployment filters.
 

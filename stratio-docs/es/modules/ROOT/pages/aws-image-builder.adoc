@@ -66,7 +66,7 @@ Sigue estos pasos para solucionarlo:
 "security_group_id": "sg-1234567890"
 ----
 +
-image::segurity-group.png[]
+image::security-group.png[]
 +
 . Añade la variable `ssh_interface` = "public_ip" en la sección 'builders' del fichero _images/capi/packer/ami/packer.json_ para que se conecte a la instancia por la IP privada.
 +
