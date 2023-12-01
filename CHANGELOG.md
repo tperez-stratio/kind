@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.3.5 (upcoming)
+## 0.17.0-0.3.5 (2023-12-01)
 
 * [Core] Add coredns PDB
 * [Core] Add cluster-autoscaler annotations to evict local volumes
