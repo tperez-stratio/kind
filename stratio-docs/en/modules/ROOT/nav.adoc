@@ -3,3 +3,6 @@
 * xref:ROOT:installation.adoc[]
 * xref:ROOT:quick-start-guide.adoc[]
 * xref:ROOT:operations.adoc[]
+* xref:ROOT:aws-image-builder.adoc[]
+* xref:ROOT:azure-image-builder.adoc[]
+* xref:ROOT:gcp-image-builder.adoc[]
