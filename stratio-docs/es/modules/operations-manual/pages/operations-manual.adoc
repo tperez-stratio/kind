@@ -1,12 +1,12 @@
-= Operaciones
+= Manual de operaciones
 
 == Generación de imágenes personalizadas
 
 Para la generación de imágenes personalizadas en los diferentes proveedores _cloud_ se ha creado una documentación de referencia para cada uno de ellos que se puede encontrar en los siguientes enlaces:
 
-xref:operations-manual:image-builder:aws-image-builder.adoc[AWS]
-xref:operations-manual:image-builder:azure-image-builder.adoc[Azure]
-xref:operations-manual:image-builder:gcp-image-builder.adoc[GCP]
+* xref:operations-manual:image-builder:aws-image-builder.adoc[AWS]
+* xref:operations-manual:image-builder:azure-image-builder.adoc[Azure]
+* xref:operations-manual:image-builder:gcp-image-builder.adoc[GCP]
 
 == Obtención del _kubeconfig_
 
