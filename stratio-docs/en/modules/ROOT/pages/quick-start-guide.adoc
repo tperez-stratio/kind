@@ -41,8 +41,6 @@ For this provider, the _control-plane_ will be deployed in VMs, therefore, the f
 
 ==== _worker_ nodes
 
-==== _worker_ nodes
-
 In the cluster descriptor, groups of _worker_ nodes can be indicated with the following options:
 
 * _name_: group name, cannot be repeated.
