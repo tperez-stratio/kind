@@ -311,7 +311,7 @@ tier: Paid
 
 This section specifies the _worker_ node groups and their characteristics.
 
-The images used must be supported by EKS. See the https://repost.aws/knowledge-center/eks-custom-linux-ami/[Custom Linux AMI for Amazon EKS].
+The images used must be supported by EKS. See the https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html[Custom Linux AMI for Amazon EKS].
 
 [cols="1,4,2,1"]
 |===
