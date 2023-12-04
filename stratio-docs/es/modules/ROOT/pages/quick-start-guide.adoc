@@ -14,7 +14,7 @@
 * Infraestructura personalizada creada en AWS (opcional).
 * Componer el fichero descriptor del _cluster_.
 ** Credenciales del usuario (_access++_++key_ y _secret++_++key_) y datos de la cuenta (región y _account++_++id_), que se cifrarán en la primera ejecución.
-** Token de GitHub para descargar plantillas (opcional).
+** _Token_ de GitHub para descargar plantillas (opcional).
 ** Datos de la cuenta (región y _account++_++id_).
 ** Datos de la infraestructura ya creada (opcional).
 ** Gestión de las zonas DNS creadas (opcional).
