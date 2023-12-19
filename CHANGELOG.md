@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.3.5 (upcoming)
+## 0.17.0-0.3.5 (2023-12-19)
 
 * [Core] Change create_iam default behaviour (to false)
 * [Core] Add example full descriptor v1beta1
