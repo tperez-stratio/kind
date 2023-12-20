@@ -2,6 +2,7 @@
     "Version": "2012-10-17",
     "Statement": [
         {
+            "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": [
                 "ec2:CreateTags",
@@ -28,6 +29,7 @@
             "Resource": "*"
         },
         {
+            "Sid": "VisualEditor1",
             "Effect": "Allow",
             "Action": [
                 "ec2:AllocateAddress",
@@ -71,6 +73,7 @@
             ]
         },
         {
+            "Sid": "VisualEditor2",
             "Effect": "Allow",
             "Action": [
                 "ec2:AuthorizeSecurityGroupIngress",
@@ -82,6 +85,7 @@
             ]
         },
         {
+            "Sid": "VisualEditor3",
             "Effect": "Allow",
             "Action": [
                 "elasticloadbalancing:AddTags",
@@ -96,6 +100,7 @@
             "Resource": "arn:aws:elasticloadbalancing:*:${AWS_ACCOUNT_ID}:loadbalancer/*"
         },
         {
+            "Sid": "VisualEditor4",
             "Effect": "Allow",
             "Action": "iam:CreateServiceLinkedRole",
             "Resource": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/*"
