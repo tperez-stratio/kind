@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.3.6 (upcoming)
+## 0.17.0-0.3.6 (2023-12-21)
 
 * [Core] HotFix: storageclass.parameters.label validation
 
