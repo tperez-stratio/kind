@@ -211,9 +211,13 @@ func (i *Infra) getAzs(p ProviderParams, networks commons.Networks) ([]string, e
 }
 
 func (i *Infra) postInstallPhase(n nodes.Node, k string) error {
-	err := installCorednsPdb(n, k)
+	c := "kubectl --kubeconfig " + kubeconfigPath + " get pdb coredns -n kube-system"
+	_, err := commons.ExecuteCommand(n, c)
 	if err != nil {
-		return err
+		err = installCorednsPdb(n, k)
+		if err != nil {
+			return err
+		}
 	}
 	return i.builder.postInstallPhase(n, k)
 }

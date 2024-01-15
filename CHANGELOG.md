@@ -3,8 +3,9 @@
 ## 0.17.0-0.3.6 (2023-12-21)
 
 * [Core] HotFix: storageclass.parameters.label validation
+* [Core] Fix: check if coredns pdb already exists before deploying
 * [Core] Restrict the maximum number of unhealthy CP nodes in MachineHealthCheck
-* 
+
 ## 0.17.0-0.3.5 (2023-12-19)
 
 * [Core] Change create_iam default behaviour (to false)
