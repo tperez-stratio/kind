@@ -88,7 +88,8 @@
                 "iam:CreateOpenIDConnectProvider",
                 "iam:DeleteOpenIDConnectProvider",
                 "iam:GetOpenIDConnectProvider",
-                "iam:CreateServiceLinkedRole"
+                "iam:CreateServiceLinkedRole",
+                "iam:TagOpenIDConnectProvider"
             ],
             "Resource": [
                 "arn:aws:iam::${AWS_ACCOUNT_ID}:role/*",
