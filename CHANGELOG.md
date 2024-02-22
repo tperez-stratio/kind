@@ -9,7 +9,6 @@
 * [Internal] Add utility to upload keos installer docker images
 * [Docs] Fix: EFS permissions
 * [Docs] Add AWS details
-* [Core] Restrict the maximum number of unhealthy CP nodes in MachineHealthCheck
 * [Core] Fix: check if coredns pdb already exists before deploying
 
 ## 0.17.0-0.3.6 (2023-12-21)
