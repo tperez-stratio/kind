@@ -27,6 +27,7 @@
                 "ec2:DescribeSubnets",
                 "ec2:DescribeVpcs",
                 "ec2:DetachInternetGateway",
+                "ec2:ModifyNetworkInterfaceAttribute",
                 "ec2:ReleaseAddress",
                 "ec2:RunInstances",
                 "ec2:TerminateInstances",
