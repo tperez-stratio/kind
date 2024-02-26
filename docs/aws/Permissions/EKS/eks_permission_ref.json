@@ -56,6 +56,7 @@
                 "ec2:CreateNatGateway",
                 "ec2:CreateSecurityGroup",
                 "ec2:DescribeVpcAttribute",
+                "ec2:DisassociateVpcCidrBlock",
                 "ec2:ModifySubnetAttribute",
                 "ec2:ModifyVpcAttribute",
                 "ecr:BatchCheckLayerAvailability",
