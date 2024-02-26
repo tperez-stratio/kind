@@ -366,7 +366,7 @@ Creating temporary cluster "example-gcp" ...
  ✓ Installing CAPx 🎖️
  ✓ Generating secrets file 📝🗝️
  ✓ Installing keos cluster operator 💻
- ✓ Creating the workload cluster 💥 34.36.216.165
+ ✓ Creating the workload cluster 💥
  ✓ Saving the workload cluster kubeconfig 📝
  ✓ Installing Calico in workload cluster 🔌
  ✓ Installing CSI in workload cluster 💾
