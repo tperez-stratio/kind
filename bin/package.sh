@@ -10,7 +10,7 @@ if [ -d "$DIR" ] || [ -r "$DIR"/cloud-provisioner]; then
 	tar czf "$DIR"/cloud-provisioner-${VERSION}.${EXTENSION} "$DIR"/cloud-provisioner
 
 	echo "Packaging upgrade-provisioner-$VERSION..."
-	tar czf "$DIR"/upgrade-provisioner-${VERSION}.${EXTENSION} "$DIR"/upgrade-provisioner
+	tar czf "$DIR"/upgrade-provisioner-${VERSION}.${EXTENSION} scripts/upgrade-provisioner.py
 else
 	echo "Run 'make build' first"
 	exit 1
