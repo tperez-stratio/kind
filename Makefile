@@ -26,9 +26,11 @@
 REPO_ROOT:=${CURDIR}
 OUT_DIR=$(REPO_ROOT)/bin
 # record the source commit in the binary, overridable
-COMMIT?=$(shell git rev-parse HEAD 2>/dev/null)
+COMMIT?=$(shell git rev-parse --short HEAD 2>/dev/null)
 # count the commits since the last release
 COMMIT_COUNT?=$(shell git describe --tags | rev | cut -d- -f2 | rev)
+# record the current tag name in the binary
+TAG=$(shell git describe --exact-match --tags 2>/dev/null)
 ################################################################################
 # ========================= Setup Go With Gimme ================================
 # go version to use for build etc.
@@ -57,14 +59,14 @@ KIND_BINARY_NAME?=cloud-provisioner
 # - smaller binaries: -w (trim debugger data, but not panics)
 # - metadata: -X=... to bake in git commit
 KIND_VERSION_PKG:=sigs.k8s.io/kind/pkg/cmd/kind/version
-KIND_BUILD_LD_FLAGS:=-X=$(KIND_VERSION_PKG).gitCommit=$(COMMIT) -X=$(KIND_VERSION_PKG).gitCommitCount=$(COMMIT_COUNT)
+KIND_BUILD_LD_FLAGS:=-X=$(KIND_VERSION_PKG).gitTag=$(TAG) -X=$(KIND_VERSION_PKG).gitCommit=$(COMMIT)
 KIND_BUILD_FLAGS?=-trimpath -ldflags="-buildid= -w $(KIND_BUILD_LD_FLAGS)"
 ################################################################################
 # ================================= Building ===================================
 # standard "make" target -> builds
 all: build
 # builds kind in a container, outputs to $(OUT_DIR)
-kind: 
+kind:
 	go build -v -o "$(OUT_DIR)/$(KIND_BINARY_NAME)" $(KIND_BUILD_FLAGS)
 # alias for building kind
 build: kind
@@ -87,7 +89,7 @@ test:
 # ================================= Cleanup ====================================
 # standard cleanup target
 clean:
-	rm -rf "$(OUT_DIR)/"
+	find $(OUT_DIR)/ -name 'cloud-provisioner*' -delete && rm -rf "$(OUT_DIR)/.gimme"
 ################################################################################
 # ============================== Auto-Update ===================================
 # update generated code, gofmt, etc.
@@ -112,10 +114,16 @@ shellcheck:
 	hack/make-rules/verify/shellcheck.sh
 
 package:
-	go build -v -o "$(OUT_DIR)/$(KIND_BINARY_NAME)" $(KIND_BUILD_FLAGS)
+	make build && bin/package.sh $(version)
 
 deploy:
-	hack/custom/deploy.sh
+	bin/deploy.sh $(version)
+
+acceptance-test:
+	/CTS/startup.sh $(groups) "/home/jenkins/agent/workspace"
+
+change-version:
+	bin/change-version.sh $(version)
 
 change-version:
 	hack/custom/change-version.sh $(version)

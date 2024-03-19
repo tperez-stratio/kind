@@ -23,6 +23,7 @@ import (
 	"sort"
 
 	"sigs.k8s.io/kind/pkg/cmd/kind/version"
+	"sigs.k8s.io/kind/pkg/commons"
 
 	"sigs.k8s.io/kind/pkg/cluster/constants"
 	"sigs.k8s.io/kind/pkg/cluster/nodes"
@@ -36,6 +37,7 @@ import (
 	internalproviders "sigs.k8s.io/kind/pkg/cluster/internal/providers"
 	"sigs.k8s.io/kind/pkg/cluster/internal/providers/docker"
 	"sigs.k8s.io/kind/pkg/cluster/internal/providers/podman"
+	internalvalidate "sigs.k8s.io/kind/pkg/cluster/internal/validate"
 )
 
 // DefaultName is the default cluster name
@@ -169,10 +171,17 @@ func ProviderWithPodman() ProviderOption {
 }
 
 // Create provisions and starts a kubernetes-in-docker cluster
-func (p *Provider) Create(name string, options ...CreateOption) error {
-	// apply options
+func (p *Provider) Create(name string, vaultPassword string, descriptorPath string, moveManagement bool, avoidCreation bool, dockerRegUrl string, clusterConfig *commons.ClusterConfig, keosCluster commons.KeosCluster, clusterCredentials commons.ClusterCredentials, options ...CreateOption) error { // apply options
 	opts := &internalcreate.ClusterOptions{
-		NameOverride: name,
+		NameOverride:       name,
+		VaultPassword:      vaultPassword,
+		DescriptorPath:     descriptorPath,
+		MoveManagement:     moveManagement,
+		AvoidCreation:      avoidCreation,
+		KeosCluster:        keosCluster,
+		ClusterCredentials: clusterCredentials,
+		ClusterConfig:      clusterConfig,
+		DockerRegUrl:       dockerRegUrl,
 	}
 	for _, o := range options {
 		if err := o.apply(opts); err != nil {
@@ -244,4 +253,14 @@ func (p *Provider) CollectLogs(name, dir string) error {
 	}
 	// collect and write cluster logs
 	return p.provider.CollectLogs(dir, n)
+}
+
+func (p *Provider) Validate(keosCluster commons.KeosCluster, clusterConfig *commons.ClusterConfig, secretsPath string, vaultPassword string) (commons.ClusterCredentials, error) {
+	params := &internalvalidate.ValidateParams{
+		KeosCluster:   keosCluster,
+		ClusterConfig: clusterConfig,
+		SecretsPath:   secretsPath,
+		VaultPassword: vaultPassword,
+	}
+	return internalvalidate.Cluster(params)
 }
