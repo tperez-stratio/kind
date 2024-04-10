@@ -5,7 +5,7 @@ metadata:
 spec:
   infra_provider: ${infra_provider}
   k8s_version: ${k8s_version}
-  region: ${aws_credentials.region}
+  region: ${region}
   credentials:
     aws: <% for (i in aws_credentials) { %>
          <%= i.key + ": " + i.value %>
