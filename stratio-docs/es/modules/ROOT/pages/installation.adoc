@@ -9,6 +9,7 @@
 Para el aprovisionamiento automatizado en AWS/EKS, se necesita ejecutar acciones sobre diversos servicios de AWS como EC2, ECR, EKS, Elastic Load Balancing (ELB), etc. Si bien la utilización o no de estas acciones dependerá del tipo de instalación, el proveedor valida que el usuario indicado tenga estos permisos para poder ejecutarse con normalidad.
 +
 ** xref:attachment$stratio-aws-unmanaged-policy.json[Descargar permisos permanentes para AWS no gestionado]
+** xref:attachment$stratio-eks-policy.json[Descargar permisos permanentes para EKS]
 ** xref:attachment$stratio-aws-temp-policy.json[Descargar permisos temporales para EKS y AWS no gestionado]
 +
 Para el despliegue de EKS se deberá crear de forma manual el rol "AWSServiceRoleForAmazonEKS" y asociarle la política "AmazonEKSServiceRolePolicy" (creada por defecto en AWS).
@@ -34,6 +35,9 @@ WARNING: Si no has creado el _stack_ de CloudFormation o no has creado manualmen
 Para los despliegues en Google Cloud Platform no gestionado se necesitarán principalmente permisos en _compute_ (instancias, discos, imágenes, _routers_, redes, etc.). Al igual que con otros proveedores soportados, el aprovisionamiento requiere una cuenta con todos los permisos solicitados.
 +
 ** xref:attachment$stratio-gcp-permissions.list[Descargar permisos para GCP]
+
+En el caso de GKE, además de los permisos anteriores se necesitarán permisos adicionales para la creación de _clusters_.
+** xref:attachment$stratio-gke-permissions.list[Descargar permisos para GKE]
 
 * Sistemas operativos certificados
 +
@@ -478,7 +482,7 @@ spec:
       account_id: '3683675..'
       secret_key: wq3/Vsc..
     github_token: github_pat_11APW..
-  k8s_version: v1.26.7
+  k8s_version: v1.28.1
   region: eu-west-1
   external_domain: domain.ext
   networks:
@@ -536,6 +540,14 @@ spec:
       quantity: 3
       size: t3.medium
       az: eu-west-1c
+---
+apiVersion: installer.stratio.com/v1beta1
+kind: ClusterConfig
+metadata:
+    name: eks-prod-config
+spec:
+    cluster_operator_version: 0.3.0
+    cluster_operator_image_version: 0.3.0
 ----
 
 ==== AWS no gestionado
@@ -572,7 +584,7 @@ spec:
       account_id: '3683675..'
       secret_key: wq3/Vsc..
     github_token: github_pat_11APW..
-  k8s_version: v1.26.7
+  k8s_version: v1.28.1
   region: eu-west-1
   external_domain: domain.ext
   networks:
@@ -644,6 +656,14 @@ spec:
       node_image: ami-0de933c15c9b49fb5
       size: t3.medium
       az: eu-west-1c
+---
+apiVersion: installer.stratio.com/v1beta1
+kind: ClusterConfig
+metadata:
+    name: aws-prod-config
+spec:
+    cluster_operator_version: 0.3.0
+    cluster_operator_image_version: 0.3.0
 ----
 
 ==== GCP
@@ -690,7 +710,7 @@ spec:
       - url: keosregistry.stratio.com/keos
         user: "myuser"
         pass: "mypass"
-  k8s_version: v1.26.8
+  k8s_version: v1.28.1
   region: europe-west4
   docker_registries:
       - url: eosregistry.azurecr.io/keos
@@ -746,6 +766,14 @@ spec:
       size: c2d-highcpu-4
       az: europe-west4-a
       node_image: projects/gcp-prod/global/images/ubuntu-2204-v1-26-8-1679997686
+---
+apiVersion: installer.stratio.com/v1beta1
+kind: ClusterConfig
+metadata:
+    name: gcp-prod-config
+spec:
+    cluster_operator_version: 0.3.0
+    cluster_operator_image_version: 0.3.0
 ----
 
 ==== Azure no gestionado
@@ -781,7 +809,7 @@ spec:
       client_secret: lSF8Q~n..
       subscription_id: '6e2a38cd-e..'
       tenant_id: '9c2f8eb6-5..'
-  k8s_version: v1.26.8
+  k8s_version: v1.28.1
   region: westeurope
   docker_registries:
     - url: eosregistry.azurecr.io/keos
@@ -824,6 +852,14 @@ spec:
       root_volume:
         size: 100
         type: StandardSSD_LRS
+---
+apiVersion: installer.stratio.com/v1beta1
+kind: ClusterConfig
+metadata:
+    name: azure-prod-config
+spec:
+    cluster_operator_version: 0.3.0
+    cluster_operator_image_version: 0.3.0
 ----
 
 ==== AKS
@@ -854,7 +890,7 @@ spec:
       client_secret: lSF8Q~n..
       subscription_id: '6e2a38cd-e..'
       tenant_id: '9c2f8eb6-5..'
-  k8s_version: v1.26.6
+  k8s_version: v1.28.1
   region: westeurope
   docker_registries:
     - url: eosregistry.azurecr.io/keos
@@ -890,6 +926,14 @@ spec:
       root_volume:
         size: 50
         type: Managed
+---
+apiVersion: installer.stratio.com/v1beta1
+kind: ClusterConfig
+metadata:
+    name: aks-prod-config
+spec:
+    cluster_operator_version: 0.3.0
+    cluster_operator_image_version: 0.3.0
 ----
 
 == Creación del _cluster_
