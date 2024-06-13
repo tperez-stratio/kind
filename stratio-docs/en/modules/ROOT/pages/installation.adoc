@@ -156,7 +156,7 @@ The _spec_ of the _KeosCluster_ is composed of the following fields:
 
 |_k8s++_++version_
 |Kubernetes version of the cluster. It must be aligned with both the cloud provider and _Stratio KEOS_. Note: EKS does not take the patch version into account.
-|v1.26.8
+|v1.28.8
 |No
 
 |_docker++_++registries_
@@ -452,7 +452,7 @@ In this section, you will find two descriptor cases to demonstrate the capabilit
 In this example you can see the following particularities:
 
 * Cluster on AWS with managed _control-plane_ (EKS).
-* Kubernetes version 1.26.x (EKS does not take into account the patch version).
+* Kubernetes version 1.28.x (EKS does not take into account the patch version).
 * Use of ECR as _Docker registry_ (no credentials needed).
 * Use of VPC and custom subnets (previously created). This section is optional.
 * Definition of a default _StorageClass_. This section is optional.
@@ -555,7 +555,7 @@ spec:
 In this example you can see the following particularities:
 
 * Cluster on AWS with unmanaged _control-plane_.
-* Kubernetes version 1.26.x.
+* Kubernetes version 1.28.x.
 * Use of ECR as _Docker registry_ (no credentials needed).
 * Use of VPC and custom subnets (previously created). This section is optional.
 * Definition of a default _StorageClass_. This section is optional.

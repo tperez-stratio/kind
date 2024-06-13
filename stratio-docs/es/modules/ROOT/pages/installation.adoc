@@ -156,7 +156,7 @@ El _spec_ del _KeosCluster_ está compuesto por los siguientes campos:
 
 |_k8s++_++version_
 |Versión de Kubernetes del _cluster_. Debe estar alineada tanto con el proveedor _cloud_ como con _Stratio KEOS_. Nota: EKS no tiene en cuenta la versión _patch_.
-|v1.26.8
+|v1.28.8
 |No
 
 |_docker++_++registries_
@@ -452,7 +452,7 @@ Se presentan dos casos de descriptor para demostrar la capacidad de _Stratio Clo
 En este ejemplo se pueden ver las siguientes particularidades:
 
 * _Cluster_ en AWS con _control-plane_ gestionado (EKS).
-* Kubernetes versión 1.26.x (EKS no tiene en cuenta la versión _patch_).
+* Kubernetes versión 1.28.x (EKS no tiene en cuenta la versión _patch_).
 * Uso de ECR como _Docker registry_ (no necesita credenciales).
 * Uso de VPC y _subnets_ personalizadas (creadas anteriormente). Este apartado es opcional.
 * Definición de una _StorageClass_ por defecto. Este apartado es opcional.
@@ -555,7 +555,7 @@ spec:
 En este ejemplo se pueden ver las siguientes particularidades:
 
 * _Cluster_ en AWS con _control-plane_ no gestionado.
-* Kubernetes versión 1.26.x.
+* Kubernetes versión 1.28.x.
 * Uso de ECR como _Docker registry_ (no necesita credenciales).
 * Uso de VPC y _subnets_ personalizadas (creadas anteriormente). Este apartado es opcional.
 * Definición de una _StorageClass_ por defecto. Este apartado es opcional.
