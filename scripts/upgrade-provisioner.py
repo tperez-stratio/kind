@@ -721,12 +721,23 @@ if __name__ == '__main__':
 
     # Get cluster descriptor
     with open(config["descriptor"]) as file:
-        cluster = list(yaml.safe_load_all(file))
+        cluster_file = list(yaml.safe_load_all(file))
     file.close()
 
+    # Initialize variables
+    keos_cluster = None
+    cluster_config = None
+
     # Assign documents to variables based on their order
-    keos_cluster = cluster[0]
-    cluster_config = cluster[1]
+    for doc in cluster_file:
+        if doc['kind'] == 'KeosCluster':
+            keos_cluster = doc
+        elif doc['kind'] == 'ClusterConfig':
+            cluster_config = doc
+
+    if not keos_cluster:
+        print("[ERROR] KeosCluster cannot be empty")
+        sys.exit(1)
 
     # Set cluster_name
     if "metadata" in keos_cluster:
