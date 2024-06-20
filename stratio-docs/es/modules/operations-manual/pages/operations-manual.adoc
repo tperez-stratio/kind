@@ -10,7 +10,7 @@ Para la generación de imágenes personalizadas en los diferentes proveedores _c
 
 == Obtención del _kubeconfig_
 
-Para comunicarse con el _API Server_ del _cluster_ creado es necesario el fichero _kubeconfig_, que se obtendrá de forma diferente según el proveedor _cloud_ utilizado y la gestión del _control-plane_ del _cluster_.
+Para comunicarse con el API Server del _cluster_ creado es necesario el fichero _kubeconfig_, que se obtendrá de forma diferente según el proveedor _cloud_ utilizado y la gestión del _control-plane_ del _cluster_.
 
 * Para EKS, se obtendrá de la forma indicada por AWS:
 +
@@ -220,7 +220,7 @@ image::autoescalado.png[]
 
 Para el autoescalado de nodos se utiliza _cluster-autoscaler_, quien detectará _pods_ pendientes de ejecutar por falta de recursos y escalará el grupo de nodos que considere según los filtros de los despliegues.
 
-Esta operación se realiza en el _API Server_, siendo los _controllers_ los encargados de crear las máquinas virtuales en el proveedor de _cloud_ y agregarlas al _cluster_ como nodos _worker_ de Kubernetes.
+Esta operación se realiza en el API Server, siendo los _controllers_ los encargados de crear las máquinas virtuales en el proveedor de _cloud_ y agregarlas al _cluster_ como nodos _worker_ de Kubernetes.
 
 Dado que el autoescalado está basado en el _cluster-autoscaler_, se añadirá el mínimo y máximo en el grupo de nodos en el objeto _KeosCluster_:
 
@@ -270,121 +270,163 @@ Los _logs_ del _cluster-autoscaler_ se pueden ver desde su _Deployment_:
 kubectl -n kube-system logs -f -l app.kubernetes.io/name=clusterapi-cluster-autoscaler
 ----
 
-=== Actualización de versión de _Stratio Cloud Provisioner_
+=== Actualización de versión de _Stratio Cloud Provisioner_ a 0.5
+
+==== Antes de empezar
+
+A diferencia de otras versiones del _script_ de _upgrade_, todas las etapas hasta completar la actualización se hacen de manera automatizada y sin interacción humana excepto para confirmaciones y solicitudes de información de versiones. Durante la actualización, es importante tener en cuenta que se realizará un cambio consecutivo de la versión de Kubernetes, siguiendo el procedimiento automatizado que se detalla a continuación:
+
+- Realizar un proceso de _backup_ de los objetos que administran la infraestructura.
+- Actualizar y/o añadir servicios dentro del _cluster_ de Kubernetes.
+- Actualizar la versión de Kubernetes de 1.26.X a 1.27.X.
+- Actualizar la versión de Kubernetes de 1.27.X a 1.28.X.
+- Restaurar, si es necesario, los servicios del proceso de _backup_ realizado previamente.
+
+En cuanto a la actualización de las versiones de Kubernetes, esta se realizará en dos etapas dentro del mismo proceso atómico: primero, el _control-plane_, y una vez que esté en la nueva versión, los nodos _worker_, iterando por cada grupo de nodos y actualizándolos uno a uno de manera secuencial.
+
+CAUTION: La actualización de la versión de Kubernetes de los nodos en los _clusters_ donde no se haya especificado la imagen puede implicar una actualización del sistema operativo.
 
 ==== Prerrequisitos
 
-Los siguientes binarios deberán estar disponibles en la máquina bastión:
+* Los siguientes binarios deberán estar disponibles en la máquina bastión:
+** python3
+** ansible-vault (pip)
+** clusterctl
+** helm
+** kubectl
+** jq
+** aws (opcional)
+** az (opcional)
+** gcloud (opcional)
+* Se deberán asegurar los permisos necesarios en el directorio _backup_ de la máquina bastión para que el usuario que ejecuta el _script_ pueda escribir en él (se crea el directorio _./backup/upgrade/_).
+* Se debe asegurar la compatibilidad de la versión de Kubernetes para los diferentes proveedores, con especial atención para _clusters_ cuyos grupos de nodos no tienen definida una imagen _custom_:
+** EKS
++
+[source,bash]
+----
+aws eks describe-addon-versions | jq -r ".addons[] | .addonVersions[] | .compatibilities[] | .clusterVersion" | sort -nr | uniq | head -4
+----
 
-- python3
-- ansible-vault (pip)
-- clusterctl
-- helm
-- kubectl
-- jq
+* AWS VMs
++
+[source,bash]
+----
+aws ec2 describe-images --filters "Name=name,Values=capa-ami-ubuntu-18.04-*" --query 'Images[*].{ID:ImageId,Name:Name}' --output table
+----
 
-Se deberán asegurar los permisos necesarios en el directorio _backup_ de la máquina bastión para que el usuario que ejecuta el _script_ pueda escribir en él (se crea el directorio _./backup/upgrade/_).
+* AKS
++
+[source,bash]
+----
+az aks get-versions --location <region> --output table
+----
+
+* Azure VMs
++
+[source,bash]
+----
+az vm image list --publisher cncf-upstream --offer "capi" --sku ubuntu-2204  --all -o table
+----
+
+* GCP VMs. No aplica ya que es obligatorio especificar una imagen _custom_.
+* En entornos productivos y especialmente en proveedores no gestionados, deberá extremarse la precaución. En particular, antes de actualizar, se recomienda hacer un _backup_ de los objetos que gestionan la infraestructura y de los servicios considerados críticos.
 
 ==== Ejecución
 
-Para actualizar la versión de _Stratio Cloud Provisioner_ de 0.3 a 0.4 se debe ejecutar el _script_ _upgrade-provisioner++_++.py_ desde el _workspace_ con el que se instaló el _cluster_.
+Durante la ejecución del _script_ se requerirá al usuario confirmar la continuación del proceso en diversas etapas y proporcionar información relevante, como la versión de Kubernetes que se desea actualizar.
 
-Puedes consultar la ayuda del _script_ con el siguiente comando:
+Se debe ejecutar el _script_ `upgrade-provisioner_.py`, cuya ayuda se puede consultar con el siguiente comando:
 
 [source,bash]
 ----
 python3 upgrade-provisioner.py -h
 ----
 
-Ejemplo:
+Ejemplo básico:
 
 [source,bash]
 ----
 python3 upgrade-provisioner.py -p <vault_pass>
 ----
 
-Los descriptores _cluster.yaml_ y _secrets.yml_ deben estar presentes en el _workspace_. Si el descriptor _cluster.yaml_ tiene otro nombre o está en otra ruta, se puede especificar con el parámetro `-d`.
-
-=== Actualización de Kubernetes
-
-La actualización del _cluster_ a una versión superior de Kubernetes se realizará en dos partes dentro del mismo proceso atómico: primero, el _control-plane_, y una vez que esté en la nueva versión, los nodos _worker_, iterando por cada grupo y actualizándolos uno a uno.
-
-CAUTION: La actualización de la versión de Kubernetes de los nodos en los _clusters_ donde no se haya especificado la imagen puede implicar una actualización del sistema operativo.
-
-image::upgrade-cp.png[]
-
-image::upgrade-w.png[]
-
-==== Prerrequisitos
-
-La actualización de versión de un _cluster_ en entornos productivos y especialmente en _flavours_ no gestionados deberá hacerse extremando todas las precauciones. En particular, antes de actualizar se recomienda hacer un _backup_ de los objetos que gestionan la infraestructura con el siguiente comando:
+Ejemplo de salida de la ejecución:
 
 [source,bash]
 ----
-clusterctl --kubeconfig ./kubeconfig/path move -n cluster-<cluster_name> --to-directory ./backup/path/
+[INFO] Using kubeconfig: /tmp/kubeconfig
+[INFO] Cluster name: esierra-dev-vms
+Press ENTER to continue upgrading the cluster or any other key to abort: 
+[INFO] Verifying upgrade process
+[INFO] Backing up files into directory ./backup/upgrade/20240611-132257
+[INFO] Backing up CAPX files: OK
+[INFO] Backing up capsule files: OK
+[INFO] Preparing capsule-mutating-webhook-configuration for the upgrade process: OK
+[INFO] Preparing capsule-validating-webhook-configuration for the upgrade process: OK
+[INFO] Applying new ClusterConfig CRD: OK
+[INFO] Upgrading Cluster Operator 0.3.0: OK
+[INFO] Restoring capsule-mutating-webhook-configuration: OK
+[INFO] Restoring capsule-validating-webhook-configuration: OK
+Please provide the Kubernetes version to which you want to upgrade: 1.27.11
+Are you sure you want to upgrade to version 1.27.11? (yes/no): y
+[INFO] Initiating upgrade to kubernetes to version 1.27.11
+[INFO] Scaling down cluster autoscaler replicas: OK
+[INFO] Applying temporal allow control plane GlobalNetworkPolicy: OK
+Please provide the image ID associated with the Kubernetes version: 1.27.11 for control-plane: ami-09d1a38098ccd9d16
+Are you sure you want to use node image: ami-09d1a38098ccd9d16 for control-plane? (yes/no): y 
+Please provide the image ID associated with the Kubernetes version: 1.27.11 for worker node: worker1: ami-09d1a38098ccd9d16
+Are you sure you want to use node image: ami-09d1a38098ccd9d16 for worker node: worker1? (yes/no): y
+Please provide the image ID associated with the Kubernetes version: 1.27.11 for worker node: minmax0: ami-09d1a38098ccd9d16
+Are you sure you want to use node image: ami-09d1a38098ccd9d16 for worker node: minmax0? (yes/no): y
+[INFO] node_image is not defined in worker node: noimage
+[INFO] Waiting for the Kubernetes version upgrade - control plane: OK
+[INFO] Waiting for the Kubernetes version upgrade - worker nodes: OK
+[INFO] Restoring allow control plane GlobalNetworkPolicy: OK
+[INFO] Scaling up cluster autoscaler replicas: OK
+Please provide the Kubernetes version to which you want to upgrade: 1.28.7
+Are you sure you want to upgrade to version 1.28.7? (yes/no): y
+[INFO] Initiating upgrade to kubernetes to version 1.28.7
+[INFO] Scaling down cluster autoscaler replicas: OK
+[INFO] Applying temporal allow control plane GlobalNetworkPolicy: OK
+Please provide the image ID associated with the Kubernetes version: 1.28.7 for control-plane: ami-0a226d9d637560c4b
+Are you sure you want to use node image: ami-0a226d9d637560c4b for control-plane? (yes/no): yes
+Please provide the image ID associated with the Kubernetes version: 1.28.7 for worker node: worker1: ami-0a226d9d637560c4b
+Are you sure you want to use node image: ami-0a226d9d637560c4b for worker node: worker1? (yes/no): yes
+Please provide the image ID associated with the Kubernetes version: 1.28.7 for worker node: minmax0: ami-0a226d9d637560c4b
+Are you sure you want to use node image: ami-0a226d9d637560c4b for worker node: minmax0? (yes/no): yes
+[INFO] node_image is not defined in worker node: noimage
+[INFO] Waiting for the Kubernetes version upgrade - control plane: OK
+[INFO] Waiting for the Kubernetes version upgrade - worker nodes: OK
+[INFO] Restoring allow control plane GlobalNetworkPolicy: OK
+[INFO] Scaling up cluster autoscaler replicas: OK
+[INFO] Upgrade process finished successfully in 117 minutes and 14.68 seconds
 ----
 
-En el caso de un _control-plane_ gestionado, se deberá verificar que la versión deseada de Kubernetes está soportada por el proveedor.
+En caso de fallo, al tratarse de un _script_ indempotente, se podrá ejecutar tantas veces como se desea y se obtenga el mensaje de finalización de actualización satisfactoria.
 
-===== EKS
+==== Verificación post-actualización
 
-Previo a la actualización de EKS debes asegurarte de que la versión deseada está soportada. Para ello puedes utilizar el siguiente comando:
-
-[source,bash]
-----
-aws eks describe-addon-versions | jq -r ".addons[] | .addonVersions[] | .compatibilities[] | .clusterVersion" | sort -nr | uniq | head -4
-----
-
-===== GCP y Azure no gestionado
-
-La _GlobalNetworkPolicy_ creada para el _control-plane_ en la fase de instalación de _Stratio KEOS_ se deberá modificar de modo que *permita toda la red de los nodos momentáneamente* mientras se ejecuta la actualización de versión.
-
-Una vez finalizada, se deberán actualizar las IP internas de los nodos y las de túnel asignadas a dichos nodos:
-
-[source,bash]
-----
-kubectl get nodes -l node-role.kubernetes.io/control-plane= -ojson | jq -r '.items[].status.addresses[] | select(.type=="InternalIP").address + "\/32"'
-----
-
-[source,bash]
-----
-IPAMHANDLERS=$(kw get ipamhandles -oname | grep control-plane)
-for handler in $IPAMHANDLERS; do kw get $handler -o json | jq -r '.spec.block | keys[]' | sed 's/\/.*/\/32/'; done
-----
-
-===== AKS
-
-Al igual que para otros _flavours_ gestionados, antes de lanzar la actualización de AKS se deben ver las versiones soportadas en la región utilizada. Para ello puedes usar su CLI:
-
-[source,bash]
-----
-az aks get-versions --location <region> --output table
-----
-
-==== Iniciar la actualización
-
-Para iniciar la actualización, una vez satisfechos los prerrequisitos se ejecutará un _patch_ de _spec.k8s++_++version_ en el objeto _KeosCluster_:
-
-[source,bash]
-----
-kubectl -n cluster-<cluster_name> patch KeosCluster <cluster_name> --type merge -p '{"spec": {"k8s_version": "v1.26.6"}}'
-----
-
-NOTE: El _controller_ aprovisiona un nuevo nodo del grupo de _workers_ con la versión actualizada y, una vez que esté _Ready_ en Kubernetes, elimina un nodo con la versión vieja. De esta forma, asegura siempre el número de nodos configurado.
-
-==== Verificación de etcd
+===== etcd
 
 Una forma de asegurar que el etcd está correcto después de actualizar un _control-plane_ no gestionado es abrir una terminal en cualquier _pod_ de etcd, ver el estado del _cluster_ y comparar las IP de los miembros registrados con las de los nodos del _control-plane_.
 
 [source,bash]
 ----
-k -n kube-system exec -ti etcd-<control-plane-node> sh
+kubectl -n kube-system exec -ti etcd-<control-plane-node> sh
 
 alias e="etcdctl --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key --cacert=/etc/kubernetes/pki/etcd/ca.crt "
 e endpoint status
 e endpoint status -w table --cluster
 e member list
 e member remove <member-id>
+----
+
+===== cluster-autoscaler
+
+Se ha de comprobar que el _deployment_ de cluster-autoscaler está configurado con su número original de réplicas, esto es, igual a 2.
+
+[source,bash]
+----
+kubectl get deploy cluster-autoscaler-clusterapi-cluster-autoscaler -n kube-system -ojsonpath='{.status.replicas}'
 ----
 
 === Eliminación del _cluster_
