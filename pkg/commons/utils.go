@@ -246,7 +246,7 @@ func ExecuteCommand(n nodes.Node, command string, timeout int, envVars ...[]stri
 	if len(envVars) > 0 {
 		cmd.SetEnv(envVars[0]...)
 	}
-	retryConditions := []string{"dial tcp: lookup", "NotFound", "timed out waiting"}
+	retryConditions := []string{"dial tcp", "NotFound", "timed out waiting"}
 	provisionCommands := strings.Contains(command, "kubectl") || strings.Contains(command, "helm") || strings.Contains(command, "clusterctl")
 	for i := 0; i < 3; i++ {
 		raw = bytes.Buffer{}
