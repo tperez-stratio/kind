@@ -10,7 +10,7 @@
 #   - Azure VMs & AKS                                        #
 ##############################################################
 
-__version__ = "0.5.0"
+__version__ = "0.5.2"
 
 import argparse
 import os
@@ -26,8 +26,8 @@ from datetime import datetime
 from ansible_vault import Vault
 from jinja2 import Template
 
-CLOUD_PROVISIONER = "0.17.0-0.5.0"
-CLUSTER_OPERATOR = "0.3.0" 
+CLOUD_PROVISIONER = "0.17.0-0.5.2"
+CLUSTER_OPERATOR = "0.3.2" 
 CLUSTER_OPERATOR_UPGRADE_SUPPORT = "0.2.0"
 CLOUD_PROVISIONER_LAST_PREVIOUS_RELEASE = "0.17.0-0.4.0"
 
@@ -266,25 +266,6 @@ rules:
     else:
         print("DRY-RUN")
 
-def scale_cluster_autoscaler(replicas, dry_run):
-    command = kubectl + " get deploy cluster-autoscaler-clusterapi-cluster-autoscaler -n kube-system -o=jsonpath='{.spec.replicas}'"
-    output = execute_command(command, False, False)
-    current_replicas = int(output)
-    if current_replicas > replicas:
-        scaling_type = "Scaling down"
-    elif current_replicas < replicas:
-        scaling_type = "Scaling up"
-    else:
-        scaling_type = "Scaling"
-    print("[INFO] " + scaling_type + " cluster autoscaler replicas:", end =" ", flush=True)
-    if dry_run:
-        print("DRY-RUN")
-    elif scaling_type == "Scaling":
-        print("SKIP")
-    else:
-        command = kubectl + " scale deploy cluster-autoscaler-clusterapi-cluster-autoscaler -n kube-system --replicas=" + str(replicas)
-        output = execute_command(command, False)
-    
 def validate_k8s_version(validation, dry_run):
     if validation == "first":
         minor = "27"
@@ -476,9 +457,6 @@ def upgrade_k8s(cluster_name, control_plane, worker_nodes, networks, desired_k8s
         if current_minor_version < desired_minor_version:
             print(f"[INFO] Initiating upgrade to kubernetes to version {desired_k8s_version}", flush=True)
 
-            if not aks_enabled:
-                scale_cluster_autoscaler(0, dry_run)
-
             if not managed:
                 cp_global_network_policy("patch", networks, provider, backup_dir, dry_run)
 
@@ -520,9 +498,6 @@ def upgrade_k8s(cluster_name, control_plane, worker_nodes, networks, desired_k8s
             if not managed:
                 cp_global_network_policy("restore", networks, provider, backup_dir, dry_run)
 
-            if not aks_enabled:
-                scale_cluster_autoscaler(2, dry_run)
-
         elif current_minor_version == desired_minor_version:
             print(f"[INFO] Updating Kubernetes to version {desired_k8s_version}: SKIP", flush=True)
 
@@ -543,9 +518,6 @@ def upgrade_k8s(cluster_name, control_plane, worker_nodes, networks, desired_k8s
 
         if not managed:
             cp_global_network_policy("restore", networks, provider, backup_dir, dry_run)
-
-        if not aks_enabled:
-            scale_cluster_autoscaler(2, dry_run)
 
     else:
         print("[FAILED] More than two different versions of Kubernetes are in the cluster, which requires human action", flush=True)
