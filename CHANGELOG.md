@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.5.2 (upcoming)
+## 0.17.0-0.5.2 (2024-06-25)
 
 * [Core] Delete cluster autoscaler references in the upgrade script
 
