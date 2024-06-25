@@ -14,7 +14,7 @@ If the required binary files are not present, they can be installed in _~/.local
 
 == Image configuration
 
-To build an AWS image, you need to create a single configuration JSON file for Packer. This file contains the configuration parameters for image generation (image configuration, instance type, region, Kubernetes version, etc.).
+To build an Azure image, you need to create a single configuration JSON file for Packer. This file contains the configuration parameters for image generation (image configuration, instance type, region, Kubernetes version, etc.).
 
 This is an example descriptor for an Ubuntu 22.04 and Kubernetes 1.26.14 image:
 

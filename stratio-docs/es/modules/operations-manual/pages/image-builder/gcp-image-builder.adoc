@@ -61,7 +61,7 @@ image::google-service-account.png[]
 
 == Configuración de la imagen
 
-Para construir una imagen de AWS, es necesario crear un único fichero JSON de configuración para Packer. Este fichero contiene los parámetros de configuración para la generación de la imagen (configuración de la imagen, tipo de instancia, región, versión de Kubernetes, etc.).
+Para construir una imagen de GCP, es necesario crear un único fichero JSON de configuración para Packer. Este fichero contiene los parámetros de configuración para la generación de la imagen (configuración de la imagen, tipo de instancia, región, versión de Kubernetes, etc.).
 
 Este es un descriptor de ejemplo para una imagen de Ubuntu 22.04 y Kubernetes 1.26.14:
 
