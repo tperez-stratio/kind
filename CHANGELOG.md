@@ -2,7 +2,7 @@
 
 
 
-## 0.17.0-0.5.3 (upcoming)
+## 0.17.0-0.5.3 (2024-08-27)
 
 * [Core] Adapted for GKE support
 
