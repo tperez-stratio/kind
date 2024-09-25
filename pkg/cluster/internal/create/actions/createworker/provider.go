@@ -506,6 +506,22 @@ func (p *Provider) deployClusterOperator(n nodes.Node, privateParams PrivatePara
 		}
 	}
 
+	// Create the docker registries credentials secret for keoscluster-controller-manager
+	if clusterCredentials.DockerRegistriesCredentials != nil && firstInstallation {
+		jsonDockerRegistriesCredentials, err := json.Marshal(clusterCredentials.DockerRegistriesCredentials)
+		if err != nil {
+			return errors.Wrap(err, "failed to marshal docker registries credentials")
+		}
+		c = "kubectl -n kube-system create secret generic keoscluster-registries --from-literal=credentials='" + string(jsonDockerRegistriesCredentials) + "'"
+		if kubeconfigPath != "" {
+			c = c + " --kubeconfig " + kubeconfigPath
+		}
+		_, err = commons.ExecuteCommand(n, c, 5, 3)
+		if err != nil {
+			return errors.Wrap(err, "failed to create keoscluster-registries secret")
+		}
+	}
+
 	if kubeconfigPath == "" {
 		// Clean keoscluster file
 		keosCluster.Spec.Credentials = commons.Credentials{}
@@ -561,18 +577,6 @@ func (p *Provider) deployClusterOperator(n nodes.Node, privateParams PrivatePara
 			_, err = commons.ExecuteCommand(n, c, 5, 3)
 			if err != nil {
 				return errors.Wrap(err, "failed to pull cluster-operator helm chart")
-			}
-		}
-		// Create the docker registries credentials secret for keoscluster-controller-manager
-		if clusterCredentials.DockerRegistriesCredentials != nil && firstInstallation {
-			jsonDockerRegistriesCredentials, err := json.Marshal(clusterCredentials.DockerRegistriesCredentials)
-			if err != nil {
-				return errors.Wrap(err, "failed to marshal docker registries credentials")
-			}
-			c = "kubectl -n kube-system create secret generic keoscluster-registries --from-literal=credentials='" + string(jsonDockerRegistriesCredentials) + "'"
-			_, err = commons.ExecuteCommand(n, c, 5, 3)
-			if err != nil {
-				return errors.Wrap(err, "failed to create keoscluster-registries secret")
 			}
 		}
 		// Deploy cluster-operator chart
