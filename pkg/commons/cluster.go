@@ -120,11 +120,22 @@ type KeosSpec struct {
 		AWS             AWSCP               `yaml:"aws,omitempty"`
 		Azure           AzureCP             `yaml:"azure,omitempty"`
 		ExtraVolumes    []ExtraVolume       `yaml:"extra_volumes,omitempty" validate:"dive"`
+		ClusterNetwork  *ClusterNetwork     `yaml:"cluster_network,omitempty"`
 	} `yaml:"control_plane"`
 
 	WorkerNodes WorkerNodes `yaml:"worker_nodes" validate:"required,dive"`
 
 	ClusterConfigRef ClusterConfigRef `yaml:"cluster_config_ref,omitempty" validate:"dive"`
+}
+
+type ClusterNetwork struct {
+	PrivateCluster *PrivateCluster `yaml:"private_cluster,omitempty"`
+}
+
+type PrivateCluster struct {
+	// +kubebuilder:default=true
+	EnablePrivateNodes    bool   `yaml:"enable_private_nodes,omitempty"`
+	ControlPlaneCidrBlock string `yaml:"control_plane_cidr_block,omitempty"`
 }
 
 type Keos struct {

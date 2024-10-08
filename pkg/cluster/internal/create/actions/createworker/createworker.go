@@ -717,7 +717,7 @@ func (a *action) Execute(ctx *actions.ActionContext) error {
 			return errors.Wrap(err, "failed to enable workload cluster's self-healing")
 		}
 
-		ctx.Status.End(true) // End Enabling workload cluster's self-healing		
+		ctx.Status.End(true) // End Enabling workload cluster's self-healing
 
 		// Use Calico as network policy engine in managed systems
 		if provider.capxProvider != "azure" {

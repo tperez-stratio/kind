@@ -149,7 +149,7 @@ type calicoHelmParams struct {
 	KeosRegUrl     string
 	Private        bool
 	IsNetPolEngine bool
-	Annotations map[string]string
+	Annotations    map[string]string
 }
 
 var scTemplate = DefaultStorageClass{
@@ -362,6 +362,23 @@ func (p *Provider) deployClusterOperator(n nodes.Node, privateParams PrivatePara
 		if keosCluster.Spec.InfraProvider != "aws" || (keosCluster.Spec.InfraProvider == "aws" && !keosCluster.Spec.ControlPlane.Managed) {
 			keosCluster.Spec.ControlPlane.AWS = commons.AWSCP{}
 		}
+		if keosCluster.Spec.InfraProvider == "gcp" && keosCluster.Spec.ControlPlane.Managed {
+			// Ensure ClusterNetwork is initialized
+			if keosCluster.Spec.ControlPlane.ClusterNetwork == nil {
+				//	fmt.Println("Initializing ClusterNetwork")
+				keosCluster.Spec.ControlPlane.ClusterNetwork = &commons.ClusterNetwork{}
+			}
+
+			// Ensure PrivateCluster is initialized
+			if keosCluster.Spec.ControlPlane.ClusterNetwork.PrivateCluster == nil {
+				//	fmt.Println("Initializing PrivateCluster")
+				keosCluster.Spec.ControlPlane.ClusterNetwork.PrivateCluster = &commons.PrivateCluster{}
+			}
+
+			keosCluster.Spec.ControlPlane.ClusterNetwork.PrivateCluster.EnablePrivateNodes = keosCluster.Spec.ControlPlane.ClusterNetwork.PrivateCluster.EnablePrivateNodes
+			keosCluster.Spec.ControlPlane.ClusterNetwork.PrivateCluster.ControlPlaneCidrBlock = keosCluster.Spec.ControlPlane.ClusterNetwork.PrivateCluster.ControlPlaneCidrBlock
+		}
+
 		if keosCluster.Spec.ControlPlane.Managed {
 			keosCluster.Spec.ControlPlane.HighlyAvailable = nil
 		}
@@ -505,7 +522,7 @@ func installCalico(n nodes.Node, k string, privateParams PrivateParams, allowCom
 		KeosRegUrl:     privateParams.KeosRegUrl,
 		Private:        privateParams.Private,
 		IsNetPolEngine: isNetPolEngine,
-		Annotations:    map[string]string{
+		Annotations: map[string]string{
 			postInstallAnnotation: "var-lib-calico",
 		},
 	}

@@ -28,6 +28,7 @@ ENV CAPI_REPO=/root/.cluster-api/local-repository
 ENV CAPA=v2.2.1
 ENV CAPG=v1.6.1
 ENV CAPZ=v1.11.4
+ENV CAPG_FORK_URL="https://github.com/Stratio/cluster-api-provider-gcp/releases/download/1.6.1-0.2.0-M2/"
 
 # Install vim
 RUN apt-get update && apt-get install -y \
@@ -86,7 +87,7 @@ RUN mkdir -p ${CAPI_REPO}/infrastructure-aws/${CAPA} ${CAPI_REPO}/infrastructure
 # Download cluster-api artifacts
 RUN for i in metadata.yaml infrastructure-components.yaml; do \
       curl -L https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/download/${CAPA}/${i} -o ${CAPI_REPO}/infrastructure-aws/${CAPA}/${i} \
-      && curl -L https://github.com/kubernetes-sigs/cluster-api-provider-gcp/releases/download/${CAPG}/${i} -o ${CAPI_REPO}/infrastructure-gcp/${CAPG}/${i} \
+      && curl -L ${CAPG_FORK_URL}/${i} -o ${CAPI_REPO}/infrastructure-gcp/${CAPG}/${i} \
       && curl -L https://github.com/kubernetes-sigs/cluster-api-provider-azure/releases/download/${CAPZ}/${i} -o ${CAPI_REPO}/infrastructure-azure/${CAPZ}/${i}; done
 
 RUN curl -L  https://github.com/kubernetes-sigs/cluster-api/releases/download/${CLUSTERCTL}/core-components.yaml -o ${CAPI_REPO}/cluster-api/${CLUSTERCTL}/core-components.yaml \
