@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.5.4 (2024-10-17)
+## 0.17.0-0.5.4 (2024-10-24)
 
 * [PLT-965] Disable managed Monitoring and Logging
 * [PLT-806] Support for private clusters on GKE
