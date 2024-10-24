@@ -2,6 +2,7 @@
 
 ## 0.17.0-0.5.4 (2024-10-17)
 
+* [PLT-965] Disable managed Monitoring and Logging
 * [PLT-806] Support for private clusters on GKE
 * [PLT-920] Added use-local-stratio-image flag to reuse local image
 * [PLT-917] Replace coredns yaml files with a single coredns tmpl file
