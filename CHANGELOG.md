@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.5.5 (upcoming)
+## 0.17.0-0.5.5 (2024-10-30)
 
 * Fix final release for cluster-api-provider-gcp image 
 
