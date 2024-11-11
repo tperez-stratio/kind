@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.6.0 (2024-10-25)
+## 0.17.0-0.6.0 (2024-11-11)
 
 * [Core] Ensure CoreDNS replicas are assigned to different nodes
 * [Core] Added the default creation of volumes for containerd, etcd and root, if not indicated in the keoscluster
