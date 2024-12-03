@@ -296,6 +296,10 @@ func installLBController(n nodes.Node, k string, privateParams PrivateParams, p 
 	if getManifestErr != nil {
 		return errors.Wrap(getManifestErr, "failed to generate "+lbControllerName+"-csi helm values")
 	}
+
+	// Add clusterName to the Helm values
+	lbControllerHelmValues += "\nclusterName: " + clusterName
+
 	c := "echo '" + lbControllerHelmValues + "' > " + lbControllerValuesFile
 	_, err := commons.ExecuteCommand(n, c, 5, 3)
 	if err != nil {
