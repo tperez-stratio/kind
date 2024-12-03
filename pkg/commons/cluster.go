@@ -176,22 +176,20 @@ type ControlPlane struct {
 }
 
 type GCPCP struct {
-	ClusterNetwork                 ClusterNetwork                 `yaml:"cluster_network,omitempty"`
-	MasterAuthorizedNetworksConfig MasterAuthorizedNetworksConfig `yaml:"master_authorized_networks_config,omitempty"`
-	MonitoringConfig               MonitoringConfig               `yaml:"monitoring_config,omitempty"`
-	LoggingConfig                  LoggingConfig                  `yaml:"logging_config,omitempty"`
+	ClusterNetwork                 *ClusterNetwork                 `yaml:"cluster_network,omitempty"`
+	MasterAuthorizedNetworksConfig *MasterAuthorizedNetworksConfig `yaml:"master_authorized_networks_config,omitempty"`
+	MonitoringConfig               *MonitoringConfig               `yaml:"monitoring_config,omitempty"`
+	LoggingConfig                  *LoggingConfig                  `yaml:"logging_config,omitempty"`
 }
 
 type ClusterNetwork struct {
-	PrivateCluster PrivateCluster `yaml:"private_cluster,omitempty"`
+	PrivateCluster *PrivateCluster `yaml:"private_cluster,omitempty"`
 }
 
 type PrivateCluster struct {
 	// +kubebuilder:default=true
-	EnablePrivateEndpoint bool `yaml:"enable_private_endpoint,omitempty"`
+	EnablePrivateEndpoint *bool `yaml:"enable_private_endpoint,omitempty"`
 	// +kubebuilder:default=true
-	EnablePrivateNodes bool `yaml:"enable_private_nodes,omitempty"`
-	// +kubebuilder:validation:Pattern=`^(10\.\d{1,3}\.\d{1,3}\.\d{1,3}\/[0-9]{1,2})$|^(172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3}\/[0-9]{1,2})$|^(192\.168\.\d{1,3}\.\d{1,3}\/[0-9]{1,2})$`
 	ControlPlaneCidrBlock string `yaml:"control_plane_cidr_block,omitempty"`
 }
 
@@ -203,9 +201,7 @@ type MasterAuthorizedNetworksConfig struct {
 }
 
 type CIDRBlock struct {
-	// +kubebuilder:validation:Pattern=`^(10\.\d{1,3}\.\d{1,3}\.\d{1,3}\/[0-9]{1,2})$|^(172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3}\/[0-9]{1,2})$|^(192\.168\.\d{1,3}\.\d{1,3}\/[0-9]{1,2})$`
 	CIDRBlock string `yaml:"cidr_block"`
-
 	// +kubebuilder:validation:Optional
 	DisplayName string `yaml:"display_name,omitempty"`
 }
@@ -506,6 +502,7 @@ func setDefaultValue(s *string, value string) {
 
 // Init sets default values for the Spec
 func (s KeosSpec) Init() KeosSpec {
+
 	highlyAvailable := true
 	s.ControlPlane.HighlyAvailable = &highlyAvailable
 
@@ -525,13 +522,34 @@ func (s KeosSpec) Init() KeosSpec {
 	s.ControlPlane.AWS.Logging.Scheduler = false
 
 	// GKE
-
-	s.ControlPlane.Gcp.ClusterNetwork.PrivateCluster.EnablePrivateEndpoint = true
-	s.ControlPlane.Gcp.ClusterNetwork.PrivateCluster.EnablePrivateNodes = true
-	s.ControlPlane.Gcp.MasterAuthorizedNetworksConfig.GCPPublicCIDRsAccessEnabled = ToPtr[bool](false)
-	s.ControlPlane.Gcp.MonitoringConfig.EnableManagedPrometheus = ToPtr[bool](false)
-	s.ControlPlane.Gcp.LoggingConfig.SystemComponents = ToPtr[bool](false)
-	s.ControlPlane.Gcp.LoggingConfig.Workloads = ToPtr[bool](false)
+	if s.ControlPlane.Gcp.ClusterNetwork == nil {
+		s.ControlPlane.Gcp.ClusterNetwork = &ClusterNetwork{}
+	}
+	if s.ControlPlane.Gcp.ClusterNetwork.PrivateCluster == nil {
+		s.ControlPlane.Gcp.ClusterNetwork.PrivateCluster = &PrivateCluster{}
+	}
+	if s.ControlPlane.Gcp.ClusterNetwork.PrivateCluster.EnablePrivateEndpoint == nil {
+		s.ControlPlane.Gcp.ClusterNetwork.PrivateCluster.EnablePrivateEndpoint = ToPtr(true)
+	}
+	if s.ControlPlane.Gcp.MasterAuthorizedNetworksConfig == nil {
+		s.ControlPlane.Gcp.MasterAuthorizedNetworksConfig = &MasterAuthorizedNetworksConfig{}
+	}
+	if s.ControlPlane.Gcp.MasterAuthorizedNetworksConfig.GCPPublicCIDRsAccessEnabled == nil {
+		s.ControlPlane.Gcp.MasterAuthorizedNetworksConfig.GCPPublicCIDRsAccessEnabled = ToPtr(false)
+	}
+	if s.ControlPlane.Gcp.MonitoringConfig == nil {
+		s.ControlPlane.Gcp.MonitoringConfig = &MonitoringConfig{}
+	}
+	if s.ControlPlane.Gcp.LoggingConfig == nil {
+		s.ControlPlane.Gcp.MonitoringConfig.EnableManagedPrometheus = ToPtr(false)
+	}
+	if s.ControlPlane.Gcp.LoggingConfig == nil {
+		s.ControlPlane.Gcp.LoggingConfig = &LoggingConfig{}
+	}
+	if s.ControlPlane.Gcp.LoggingConfig.SystemComponents == nil {
+		s.ControlPlane.Gcp.LoggingConfig.SystemComponents = ToPtr(false)
+		s.ControlPlane.Gcp.LoggingConfig.Workloads = ToPtr(false)
+	}
 
 	// Helm
 	s.HelmRepository.AuthRequired = false
