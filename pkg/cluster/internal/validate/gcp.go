@@ -38,6 +38,12 @@ var GCPVolumes = []string{"pd-balanced", "pd-ssd", "pd-standard", "pd-extreme"}
 var isGCPNodeImage = regexp.MustCompile(`^projects/[\w-]+/global/images/[\w-]+$`).MatchString
 var GCPNodeImageFormat = "projects/[PROJECT_ID]/global/images/[IMAGE_NAME]"
 
+// Regex for private CIDR Control Plane and Master Authorized Networks
+var GCPCPPrivatePattern = `^(10\.\d{1,3}\.\d{1,3}\.\d{1,3}\/28)$|^(172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3}\/28)$|^(192\.168\.\d{1,3}\.\d{1,3}\/28)$`
+var GCPMANPrivatePattern = `^(10\.\d{1,3}\.\d{1,3}\.\d{1,3}\/[0-9]{1,2})$|^(172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3}\/[0-9]{1,2})$|^(192\.168\.\d{1,3}\.\d{1,3}\/[0-9]{1,2})$`
+var GCPControlPlaneCidrBlock = regexp.MustCompile(GCPCPPrivatePattern).MatchString
+var GCPMANCIDRBlock = regexp.MustCompile(GCPMANPrivatePattern).MatchString
+
 func validateGCP(spec commons.KeosSpec, providerSecrets map[string]string) error {
 	var err error
 
@@ -111,6 +117,43 @@ func validateGCP(spec commons.KeosSpec, providerSecrets map[string]string) error
 			for i, ev := range wn.ExtraVolumes {
 				if err := validateVolumeType(ev.Type, GCPVolumes); err != nil {
 					return errors.Wrap(err, "spec.worker_nodes."+wn.Name+".extra_volumes["+strconv.Itoa(i)+"]: Invalid value: \"type\"")
+				}
+			}
+		}
+	}
+
+	if spec.ControlPlane.Managed {
+		// First - If enablePrivateEndpoint is true, then ControlPlaneCidrBlock is required
+		if spec.ControlPlane.Gcp.ClusterNetwork != nil {
+			privateCluster := spec.ControlPlane.Gcp.ClusterNetwork.PrivateCluster
+			if privateCluster != nil {
+				if privateCluster.EnablePrivateEndpoint != nil && *privateCluster.EnablePrivateEndpoint && privateCluster.ControlPlaneCidrBlock == "" {
+					return errors.New("ControlPlaneCidrBlock is required when EnablePrivateEndpoint is true")
+				}
+			}
+			if privateCluster.ControlPlaneCidrBlock != "" {
+				// Verifica el formato con regex
+				if !GCPControlPlaneCidrBlock(privateCluster.ControlPlaneCidrBlock) {
+					return errors.New("ControlPlaneCidrBlock invalid format.\nIt must be a Private CIDR with format: " + GCPCPPrivatePattern)
+				}
+			}
+		}
+		// Check if cluster network is nil
+		if spec.ControlPlane.Gcp.ClusterNetwork == nil {
+			return errors.New("spec.control_plane.gcp.cluster_network: is required")
+		}
+		// Check if privateCluster is nil
+		if spec.ControlPlane.Gcp.ClusterNetwork.PrivateCluster == nil {
+			// Since defaults are set elsewhere, treat EnablePrivateEndpoint as nil (default true)
+			// ControlPlaneCidrBlock is empty (since privateCluster is nil)
+			return errors.New("spec.control_plane.gcp.cluster_network: is required")
+		}
+
+		// Validación para MasterAuthorizedNetworksConfig
+		if spec.ControlPlane.Gcp.MasterAuthorizedNetworksConfig != nil && spec.ControlPlane.Gcp.MasterAuthorizedNetworksConfig.CIDRBlocks != nil {
+			for _, block := range spec.ControlPlane.Gcp.MasterAuthorizedNetworksConfig.CIDRBlocks {
+				if !GCPMANCIDRBlock(block.CIDRBlock) {
+					return errors.New("CIDRBlock invalid format.\nIt must be a Private CIDR with format " + GCPMANPrivatePattern)
 				}
 			}
 		}
