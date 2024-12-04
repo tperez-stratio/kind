@@ -1,5 +1,10 @@
 # Changelog
 
+
+## 0.17.0-0.6.1 (upcoming)
+
+* [Core] Fix [PLT-964]
+
 ## 0.17.0-0.6.0 (2024-11-11)
 
 * [Core] Ensure CoreDNS replicas are assigned to different nodes
