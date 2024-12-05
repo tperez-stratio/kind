@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.5.6 (upcoming)
+## 0.17.0-0.5.6 (2024-12-05)
 
 * [PLT-1313] Support secondary CIDR ranges for GKE
 * [PLT-1642] Suppport CMEK for GKE
