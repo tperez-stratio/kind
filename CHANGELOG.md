@@ -1,5 +1,10 @@
 # Changelog
 
+
+## 0.17.0-0.5.7 (upcoming)
+
+* Update capg version
+
 ## 0.17.0-0.5.6 (2024-12-05)
 
 * [PLT-1313] Support secondary CIDR ranges for GKE
