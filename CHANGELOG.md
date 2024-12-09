@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 0.17.0-0.5.7 (upcoming)
+## 0.17.0-0.5.7 (2024-12-09)
 
 * Update capg version
 
