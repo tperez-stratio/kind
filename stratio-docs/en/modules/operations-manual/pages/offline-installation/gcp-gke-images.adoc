@@ -1,21 +1,21 @@
-= Imágenes GCP no gestionado
+= GKE images
 
-== Imágenes propias
+== Own images
 
 |===
-| Instalación | Versión | Imagen pública | Versión
+| Installation | Version | Public Image | Version
 
-| *Instalado por Cluster API - CAPG*
-| *v1.4.0*
+| *Installed by Cluster API - CAPG*
+| *1.6.1-0.2.1*
 |
 |
 
 |
 |
-| registry.k8s.io/cluster-api-gcp/cluster-api-gcp-controller
-| v1.4.0
+| stratio-releases.repo.stratio.com/stratio/cluster-api-gcp-controller
+| 1.6.1-0.2.1
 
-| *Instalado mediante templates - CSI*
+| *Installed through templates - CSI*
 | ***
 |
 |
@@ -51,12 +51,12 @@
 | v6.1.0
 |===
 
-== Imágenes comunes necesarias en GCP no gestionado
+== Common images needed in unmanaged GCP
 
-Asociadas a los _charts_ que instala _Stratio Cloud Provisioner_ en GCP no gestionado, las imágenes necesarias son:
+Associated with the charts that _Stratio Cloud Provisioner_ installs on unmanaged GCP, the required images are:
 
 |===
-| _Chart_ | Versión | Imagen pública | Versión
+| Chart | Version | Public image | Version
 
 | *tigera-operator*
 | *v3.26.1*
@@ -149,16 +149,21 @@ Asociadas a los _charts_ que instala _Stratio Cloud Provisioner_ en GCP no gesti
 | v1.27.2
 
 | *cluster-operator*
-| ***
+| *0.3.6*
 |
 |
+
+|
+|
+| stratio-releases.repo.stratio.com/stratio/cluster-operator
+| 0.3.6
 
 |
 |
 | gcr.io/kubebuilder/kube-rbac-proxy
-| v0.13.1
+| v0.15.0
 
-| *Instalado por Cluster API - CAPI Component*
+| *Installed by Cluster API - CAPI Component*
 | *v1.5.3*
 |
 |
