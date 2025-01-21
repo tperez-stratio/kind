@@ -15,9 +15,7 @@ Para el despliegue de EKS se deberá crear de forma manual el rol "AWSServiceRol
 
 * Sistemas operativos certificados
 +
-Para asegurar las funcionalidades soportadas por el _control-plane_ gestionado de EKS, se deberá utilizar cualquier AMI provista por AWS específicamente para este fin.
-+
-Las https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html[AMI optimizadas para Amazon EKS] se crean sobre el sistema operativo Amazon Linux 2.
+Para garantizar las funcionalidades del _control-plane_ gestionado de EKS, es necesario usar las imágenes proporcionadas por Stratio. Estas se pueden consultar en la sección de xref:stratio-generative-ai-data-fabric:ROOT:stratio-generative-ai-data-fabric-artifacts.adoc#_imágenes_para_entornos_cloud[artefactos de _Stratio Generative AI Data Fabric_] de la documentación.
 +
 El sistema operativo recomendado actualmente para este proveedor es Ubuntu 22.04.
 
@@ -55,7 +53,7 @@ Al igual que con otros proveedores soportados, el aprovisionamiento requiere una
 
 * Sistemas operativos certificados
 +
-Para los entornos en Azure se podrá utilizar https://github.com/kubernetes-sigs/image-builder/tree/master/images/capi[_image builder_], una herramienta oficial que permite crear y disponibilizar imágenes para _Stratio KEOS_. Para mayor detalle en la construcción de las imágenes ver la xref:operations-manual:image-builder/azure-image-builder.adoc[guía para Azure].
+En los entornos de Azure, se deben usar las imágenes proporcionadas por Stratio. Puedes consultarlas en la sección de xref:stratio-generative-ai-data-fabric:ROOT:stratio-generative-ai-data-fabric-artifacts.adoc#_imágenes_para_entornos_cloud[artefactos de _Stratio Generative AI Data Fabric_] de la documentación.
 +
 El sistema operativo recomendado actualmente para este proveedor es Ubuntu 22.04, siendo el que crea por defecto el _controller_ de este proveedor _cloud_.
 
@@ -70,15 +68,6 @@ Al momento de crear la imagen para el _cluster_ se deberán tener en cuenta las 
 ==== Elasticsearch
 
 Para soportar los despliegues de Elasticsearch, el Sistema Operativo deberá contar con el parámetro `max_map_count = 262144` del _sysctl_ como indica su https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html[documentación oficial].
-
-Para las imágenes creadas con _image-builder_ (*Azure no gestionado*), hay que añadir el siguiente elemento en el https://github.com/kubernetes-sigs/image-builder/blob/main/images/capi/ansible/roles/node/tasks/main.yml#L55[_loop_ de los parámetros del _kernel_] (en _/images/capi/ansible/roles/node/tasks/main.yml_):
-
-[source,yaml]
-----
-- { param: vm.max_map_count, val: 262144 }
-----
-
-Las imágenes de Amazon Linux 2 *utilizadas por EKS* ya cuentan con este parámetro/valor.
 
 == Descriptor del _cluster_
 
