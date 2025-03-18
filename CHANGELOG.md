@@ -1,13 +1,19 @@
 # Changelog
 
-## 0.17.0-0.7.0 (upcoming)
+## 0.17.0-0.8.0 (upcoming)
+
+* Pending changelog
+
+## Previous development
+
+### Branched to branch-0.17.0-0.7 (2025-03-18)
 
 * [PLT-1621] Support k8s v1.32
 * [PLT-1394] Bump Flux chart version to 2.14.1
 * [PLT-1393] Bump Tigera Operator version to v3.29.1
 * [PLT-1741] Bump cluster-operator references to 0.5.0 version. Update EKS addons dependencies documentation
 
-## Previous development
+
 
 ### Branched to branch-0.17.0-0.6 (2024-10-25)
 
