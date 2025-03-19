@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.6.4 (2025-03-11)
+## 0.17.0-0.6.4 (2025-03-19)
 
 * [PLT-1621] Added new flag to support only provisioner upgrades
 
