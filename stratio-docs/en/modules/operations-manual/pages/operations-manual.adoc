@@ -242,6 +242,8 @@ Unlike other versions of the upgrade script, all steps until the upgrade is comp
 - Upgrade the version of Kubernetes from 1.27.X to 1.28.X.
 - Restore, if necessary, the services from the backup process previously performed.
 
+NOTE: If you use the `--skip-k8s-intermediate-version` flag, Kubernetes will be upgraded directly from version 1.26.X to 1.28.X in a single step. This is only supported in EKS environments.
+
 Regarding the Kubernetes version upgrade, this will be done in two stages within the same atomic process: first, the _control-plane_, and once on the new version, the _worker_ nodes, iterating through each group of nodes and upgrading them one by one sequentially.
 
 CAUTION: Upgrading the Kubernetes version of nodes in clusters where the image has not been specified may involve an OS upgrade.
@@ -268,7 +270,6 @@ To avoid this issue:
 ** jq
 ** aws (optional)
 ** az (optional)
-** gcloud (optional)
 * The necessary permissions must be ensured in the backup directory of the bastion machine so that the user running the script can write to it (the _./backup/upgrade/_ directory is created).
 * Kubernetes version compatibility must be ensured for different vendors, with special attention for clusters whose node groups do not have a custom image defined:
 ** EKS

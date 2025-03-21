@@ -5,9 +5,8 @@
 # Author: Stratio Clouds <clouds-integration@stratio.com>    #
 # Supported provisioner versions: 0.4.X                      #
 # Supported cloud providers:                                 #
-#   - AWS VMs & EKS                                          #
-#   - GCP VMs                                                #
-#   - Azure VMs & AKS                                        #
+#   - EKS                                                    #
+#   - Azure VMs                                              #
 ##############################################################
 
 __version__ = "0.5.8"
@@ -57,6 +56,7 @@ def parse_args():
     parser.add_argument("--disable-backup", action="store_true", help="Disable backing up files before upgrading (enabled by default)")
     parser.add_argument("--disable-prepare-capsule", action="store_true", help="Disable preparing capsule for the upgrade process (enabled by default)")
     parser.add_argument("--dry-run", action="store_true", help="Do not upgrade components. This invalidates all other options")
+    parser.add_argument("--skip-k8s-intermediate-version", action="store_true", help="Skipping workers intermediate kubernetes version upgrade")
     args = parser.parse_args()
     return vars(args)
 
@@ -181,6 +181,39 @@ def restore_capsule(dry_run):
                     """jq -r '.webhooks[] |= (select(.name == "namespaces.capsule.clastix.io").objectSelector |= {})' """ +
                     "| " + kubectl + " apply -f -")
             execute_command(command, False)
+    else:
+        print("DRY-RUN")
+
+def delete_cluster_operator_webhooks(dry_run):
+    print("[INFO] Deleting keoscluster-validating-webhook-configuration for the upgrade process:", end =" ", flush=True)
+    if not dry_run:
+        command = kubectl + " delete validatingwebhookconfigurations keoscluster-validating-webhook-configuration"
+        status, output = subprocess.getstatusoutput(command)
+        if status != 0:
+            if "NotFound" in output:
+                print("SKIP")
+            else:
+                print("FAILED")
+                print("[ERROR] Deleting keoscluster-validating-webhook-configuration failed:\n" + output)
+                sys.exit(1)
+        print("OK")
+    else:
+        print("DRY-RUN")
+
+def restore_cluster_operator_webhooks(dry_run):
+    print("[INFO] Restoring keoscluster-validating-webhook-configuration for the upgrade process:", end =" ", flush=True)
+    if not dry_run:
+        cluster_operator_revision = get_chart_revision("cluster-operator", "kube-system")
+        command = helm + " rollback -n kube-system cluster-operator " + cluster_operator_revision
+        status, output = subprocess.getstatusoutput(command)
+        if status != 0:
+            if "NotFound" in output:
+                print("SKIP")
+            else:
+                print("FAILED")
+                print("[ERROR] Restoring keoscluster-validating-webhook-configuration failed:\n" + output)
+                sys.exit(1)
+        print("OK")
     else:
         print("DRY-RUN")
 
@@ -416,10 +449,7 @@ spec:
             execute_command(command, dry_run)
             os.remove(allow_cp_gnp_file)
 
-
-
 def upgrade_k8s(cluster_name, control_plane, worker_nodes, networks, desired_k8s_version, provider, managed, backup_dir, dry_run):
-    aks_enabled = provider == "azure" and managed
     current_k8s_version = get_kubernetes_version()
     current_minor_version = int(current_k8s_version.split('.')[1])
     desired_minor_version = int(desired_k8s_version.split('.')[1])
@@ -498,7 +528,7 @@ def upgrade_k8s(cluster_name, control_plane, worker_nodes, networks, desired_k8s
         print("[FAILED] More than two different versions of Kubernetes are in the cluster, which requires human action", flush=True)
         sys.exit(1)
 
-def cluster_operator(kubeconfig, helm_repo, provider, credentials, cluster_name, dry_run):
+def upgrade_cluster_operator(kubeconfig, helm_repo, provider, credentials, cluster_name, dry_run):
     # Check if cluster-operator is already upgraded
     cluster_operator_version = get_chart_version("cluster-operator", "kube-system")
     if cluster_operator_version == CLUSTER_OPERATOR:
@@ -522,21 +552,12 @@ def cluster_operator(kubeconfig, helm_repo, provider, credentials, cluster_name,
                 print("FAILED")
                 print("[ERROR] " + errors)
 
-        command = helm + " -n kube-system get values cluster-operator -o yaml 2>/dev/null"
-        values = execute_command(command, dry_run, False)
-        cluster_operator_values = open('./clusteroperator.values', 'w')
-        cluster_operator_values.write(values)
-        cluster_operator_values.close()
-
         # Upgrade cluster-operator
         print("[INFO] Upgrading Cluster Operator " + CLUSTER_OPERATOR + ":", end =" ", flush=True)
         if dry_run:
             print("DRY-RUN")
         else:
-            command = (helm + " -n kube-system upgrade cluster-operator" +
-                " --wait --version " + CLUSTER_OPERATOR +
-                " --values ./clusteroperator.values" +
-                " --set provider=" + provider +
+            command = (helm + " upgrade --reuse-values -n kube-system cluster-operator" +
                 " --set app.containers.controllerManager.image.tag=" + CLUSTER_OPERATOR)
             if helm_repo["type"] == "generic":
                 command += " cluster-operator --repo " + helm_repo["url"]
@@ -545,17 +566,7 @@ def cluster_operator(kubeconfig, helm_repo, provider, credentials, cluster_name,
             if "user" in helm_repo:
                 command += " --username=" + helm_repo["user"]
                 command += " --password=" + helm_repo["pass"]
-            if provider == "aws":
-                command += " --set secrets.common.credentialsBase64=" + credentials
-            if provider == "azure":
-                command += " --set secrets.azure.clientIDBase64=" + base64.b64encode(credentials["client_id"].encode("ascii")).decode("ascii")
-                command += " --set secrets.azure.clientSecretBase64=" + base64.b64encode(credentials["client_secret"].encode("ascii")).decode("ascii")
-                command += " --set secrets.azure.tenantIDBase64=" + base64.b64encode(credentials["tenant_id"].encode("ascii")).decode("ascii")
-                command += " --set secrets.azure.subscriptionIDBase64=" + base64.b64encode(credentials["subscription_id"].encode("ascii")).decode("ascii")
-            if provider == "gcp":
-                command += " --set secrets.common.credentialsBase64=" + credentials
             execute_command(command, False)
-            os.remove('./clusteroperator.values')
 
 def execute_command(command, dry_run, result = True, max_retries=3, retry_delay=5):
     output = ""
@@ -584,6 +595,8 @@ def execute_command(command, dry_run, result = True, max_retries=3, retry_delay=
 def get_chart_version(chart, namespace):
     command = helm + " -n " + namespace + " list"
     output = execute_command(command, False, False)
+    # NAME                NAMESPACE   REVISION    UPDATED                                 STATUS      CHART                   APP VERSION
+    # cluster-operator    kube-system 1           2025-03-17 10:11:40.845888283 +0000 UTC deployed    cluster-operator-0.2.0  0.2.0 
     for line in output.split("\n"):
         splitted_line = line.split()
         if chart == splitted_line[0]:
@@ -591,6 +604,17 @@ def get_chart_version(chart, namespace):
                 return splitted_line[9]
             else:
                 return splitted_line[8].split("-")[-1]
+    return None
+
+def get_chart_revision(chart, namespace):
+    command = helm + " -n " + namespace + " list"
+    output = execute_command(command, False, False)
+    # NAME                NAMESPACE   REVISION    UPDATED                                 STATUS      CHART                   APP VERSION
+    # cluster-operator    kube-system 1           2025-03-17 10:11:40.845888283 +0000 UTC deployed    cluster-operator-0.2.0  0.2.0 
+    for line in output.split("\n"):
+        splitted_line = line.split()
+        if chart == splitted_line[0]:
+            return splitted_line[2]
     return None
 
 def get_version(version):
@@ -715,22 +739,26 @@ if __name__ == '__main__':
         print("[ERROR] Decoding secrets file failed:\n" + str(e))
         sys.exit(1)
 
-    # Set env vars
-    env_vars = "CLUSTER_TOPOLOGY=true CLUSTERCTL_DISABLE_VERSIONCHECK=true GOPROXY=off"
+    # Check supported upgrades
     provider = keos_cluster["spec"]["infra_provider"]
     managed = keos_cluster["spec"]["control_plane"]["managed"]
+    if not ((provider == "aws" and managed) or (provider == "azure" and not managed)):
+        print("[ERROR] Upgrade is only supported for EKS and Azure VMs clusters")
+        sys.exit(1)
+
+    # Check special flags
+    skip_k8s_intermediate_version = config["skip_k8s_intermediate_version"]
+    if provider != "aws" and skip_k8s_intermediate_version:
+        print("[ERROR] --skip-k8s-intermediate-version flag is only supported for EKS")
+        sys.exit(1)
+
+    # Set env vars
+    env_vars = "CLUSTER_TOPOLOGY=true CLUSTERCTL_DISABLE_VERSIONCHECK=true GOPROXY=off"
     if provider == "aws":
         namespace = "capa-system"
         version = CAPA
         credentials = subprocess.getoutput(kubectl + " -n " + namespace + " get secret capa-manager-bootstrap-credentials -o jsonpath='{.data.credentials}'")
         env_vars += " CAPA_EKS_IAM=true AWS_B64ENCODED_CREDENTIALS=" + credentials
-    if provider == "gcp":
-        namespace = "capg-system"
-        version = CAPG
-        credentials = subprocess.getoutput(kubectl + " -n " + namespace + " get secret capg-manager-bootstrap-credentials -o json | jq -r '.data[\"credentials.json\"]'")
-        if managed:
-            env_vars += " EXP_MACHINE_POOL=true EXP_CAPG_GKE=true"
-        env_vars += " GCP_B64ENCODED_CREDENTIALS=" + credentials
     if provider == "azure":
         namespace = "capz-system"
         version = CAPZ
@@ -786,22 +814,30 @@ if __name__ == '__main__':
             sys.exit(0)
 
     # Cluster Operator
-    cluster_operator(kubeconfig, helm_repo, provider, credentials, cluster_name, config["dry_run"])
+    upgrade_cluster_operator(kubeconfig, helm_repo, provider, credentials, cluster_name, config["dry_run"])
+
+    # Prepare cluster-operator for skipping validations to avoid upgrading to k8s intermediate versions
+    if skip_k8s_intermediate_version:
+        delete_cluster_operator_webhooks(config["dry_run"])
 
     # Restore capsule
     if not config["disable_prepare_capsule"]:
         restore_capsule(config["dry_run"])
-    
+
     networks = keos_cluster["spec"].get("networks", {})
     # Update kubernetes version to 1.27.X
     current_k8s_version = get_kubernetes_version()
-    if "1.26" in current_k8s_version:
+    if "1.26" in current_k8s_version and not skip_k8s_intermediate_version:
         required_k8s_version=validate_k8s_version("first", config["dry_run"])
         upgrade_k8s(cluster_name, keos_cluster["spec"]["control_plane"], keos_cluster["spec"]["worker_nodes"], networks, required_k8s_version, provider, managed, backup_dir, config["dry_run"])
 
     # Update kubernetes version to 1.28.X
     required_k8s_version=validate_k8s_version("second", config["dry_run"])
     upgrade_k8s(cluster_name, keos_cluster["spec"]["control_plane"], keos_cluster["spec"]["worker_nodes"], networks, required_k8s_version, provider, managed, backup_dir, config["dry_run"])
+    
+    if skip_k8s_intermediate_version:
+        restore_cluster_operator_webhooks(config["dry_run"])
+
     end_time = time.time()
     elapsed_time = end_time - start_time
     minutes, seconds = divmod(elapsed_time, 60)
