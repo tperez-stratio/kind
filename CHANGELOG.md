@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.5.9 (2025-03-20)
+## 0.17.0-0.5.9 (2025-03-24)
 
 * [PLT-1887] Dynamic region describe
 
