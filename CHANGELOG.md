@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.7.0 (upcoming)
+## 0.17.0-0.7.0 (2025-03-25)
 
 * [PLT-1652] Allow skipping kubernetes intermediate version during upgrade
 * [PLT-1887] -  Dynamic region describe
