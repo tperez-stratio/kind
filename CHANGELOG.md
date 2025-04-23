@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.5.10 (upcoming)
+## 0.17.0-0.5.10 (2025-04-23)
 
 * [PLT-2032] Fix default Helm repository management type during cloud-provisioner upgrade
 
