@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0-0.7.1 (upcoming)
+## 0.17.0-0.7.1 (2025-05-07)
 
 * [PLT-2098] Improve kubernetes version checks during cloud-provisioner-upgrade
 
