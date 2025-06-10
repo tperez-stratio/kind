@@ -2,6 +2,7 @@
 
 ## 0.17.0-0.7.2 (upcoming)
 
+* [PLT-1549] Activate NodePool SecureBoot
 * [PLT-1762] [EKS] Soportar instalaciones con Assume Role
 * [PLT-2226] Set private repository by default
 * [PLT-2289] Add safe-to-evict annotations in Flux pods
@@ -72,6 +73,3 @@
 * [PLT-992] Uncouple CAPX from cloud provisioner and allow to specify versions in clusterconfig 
 * [PLT-988] Uncouple CAPX from Dockerfile
 * [PLT-964] Add GKE Private Cluster Validations
-
-
-
