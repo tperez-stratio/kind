@@ -10,7 +10,7 @@
 #   - GKE                                                    #
 ##############################################################
 
-__version__ = "0.9.5"
+__version__ = "0.9.6"
 
 import argparse
 import os
@@ -35,11 +35,11 @@ from urllib.parse import urlparse
 sys.stdout.reconfigure(line_buffering=True)
 
 # NOTE: plain semver since 0.9.0, no legacy "0.17.0-0.X" prefix.
-CLOUD_PROVISIONER = "0.9.5"
+CLOUD_PROVISIONER = "0.9.6"
 # Must match a minor in keoscluster_webhook.go:61 k8sVersionSupported (bare "major.minor", no "v").
 # CR patch digit is always ".0" when patching — EKS/GKE ignore it, not an exact release pin.
 K8S_VERSION = "1.35"
-CLUSTER_OPERATOR = "0.7.4"
+CLUSTER_OPERATOR = "0.7.5"
 
 # Flux's own default (5m) is too short for a DaemonSet rollout (maxUnavailable=1) — a
 # fixed value doesn't scale with node count either (verified live 2026-08-25), so
@@ -124,7 +124,7 @@ common_charts = {
         "repo": "https://kubernetes.github.io/autoscaler"
     },
     "cluster-operator": {
-        "version": "0.7.4",
+        "version": "0.7.5",
         "namespace": "kube-system",
         "repo": ""
     },
@@ -1971,10 +1971,8 @@ def upgrade_cluster_api_providers(provider, provider_current_versions=None):
     print("OK")
 
 def restore_capi_capx_ha_replicas(provider):
-    '''Re-scale CAPI/CAPX controller Deployments to 2 (HA). clusterctl reinstalls upgraded
-    providers with the upstream manifest's "replicas: 1" — no upgrade path re-applies the
-    HA scaling `create cluster` sets, which combined with their PDB (minAvailable:1) can deadlock draining. Idempotent.'''
-    print("[INFO] Restoring CAPI/CAPX HA replicas:", end=" ", flush=True)
+    '''Restore the HA replicas (2) and priorityClassName that clusterctl upgrade drops from the CAPI/CAPX Deployments. Idempotent.'''
+    print("[INFO] Restoring CAPI/CAPX HA replicas and priorityClassName:", end=" ", flush=True)
 
     deployments = [("capi-system", "capi-controller-manager")]
     if provider == "aws":
@@ -1988,6 +1986,10 @@ def restore_capi_capx_ha_replicas(provider):
 
     try:
         for namespace, deploy in deployments:
+            priority_class, _ = run_command(f"{kubectl} -n {namespace} get deploy {deploy} -o jsonpath='{{.spec.template.spec.priorityClassName}}'")
+            if priority_class.strip() != "system-node-critical":
+                run_command(f"{kubectl} -n {namespace} patch deploy {deploy} --type=merge "
+                            "-p '{\"spec\": {\"template\": {\"spec\": {\"priorityClassName\": \"system-node-critical\"}}}}'")
             run_command(f"{kubectl} -n {namespace} scale deploy {deploy} --replicas 2")
             run_command(f"{kubectl} -n {namespace} rollout status deploy {deploy} --timeout 90s")
         print("OK")
