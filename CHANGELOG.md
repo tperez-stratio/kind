@@ -37,6 +37,7 @@ All notable changes to this project will be documented in this file.
 * [PLT-4769] Add an upgrade planning index (`operations-manual/upgrade-overview.adoc`) and, below it, the fact sheet for the 0.7.x to 0.9.x upgrade (`operations-manual/upgrade-overview/from-0-7-x-to-0-9-x.adoc`), covering scope, outage, phases, per-provider differences, point of no return, data, rollback and post-upgrade checks
 * [PLT-4795] `ExecuteCommand` now retries on transient `etcdserver` timeouts (`etcdserver:.*timed out`, `etcdserver: leader changed`) — a newly joined control-plane etcd member's raft catch-up window could abort `create cluster` at a later step (e.g. the CSI install) with `etcdserver: request timed out`, which the previous retry conditions never matched
 * [PLT-4792] Retry create cluster commands on transient etcd timeouts
+* [PLT-5022] Installation docs (Azure VMs): document the extra permissions the deployment user needs to run the Stratio KEOS external-dns prerequisite — new `stratio-azure-keos-dns-role.json` attachment (public and private DNS zones, private zone link to the VNet and role assignments, with their deletes), which complements the deployment user role, and the Microsoft Graph `Application.ReadWrite.OwnedBy` application permission granted by an Entra ID administrator
 
 ## 0.9.3 (2026-09-11)
 
