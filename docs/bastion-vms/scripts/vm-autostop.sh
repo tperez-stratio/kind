@@ -65,6 +65,8 @@ prunable_images() {
   cutoff=$(( $(date +%s) - IMAGE_MIN_AGE_H * 3600 ))
   docker images --no-trunc --format '{{.Repository}}:{{.Tag}} {{.ID}} {{.CreatedAt}}' | while read -r ref id created; do
     [[ "$ref" == cloud-provisioner:* && "$ref" != *:"<none>" ]] || continue
+    # Release-shaped tags are what creates pass to --image (retags of published images): never removed
+    [[ "${ref#cloud-provisioner:}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-(m|rc)\.[0-9]+)?$ ]] && continue
     grep -qx "$id" <<<"$used" && continue
     (( $(date -d "${created% *}" +%s) < cutoff )) && echo "$ref"
   done

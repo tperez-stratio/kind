@@ -278,7 +278,7 @@ Each kind bootstrap takes ~4.5 GB of the root disk (image layers and its anonymo
 | Step | When | What | Why it is safe |
 |---|---|---|---|
 | 1 | Always | `docker volume prune -f` | Only volumes no container (running or stopped) uses; a running bootstrap keeps its own |
-| 2 | Root disk ≥ `DISK_PRUNE_PCT` (75) | `docker rmi` of local builds `cloud-provisioner:<tag>` older than `IMAGE_MIN_AGE_H` (48 h) | Never an image a container uses, nor one that also has a registry tag; `--build-stratio-image` builds them again. Published images (`<registry>/…`) are kept: pulling them again may need a registry login |
+| 2 | Root disk ≥ `DISK_PRUNE_PCT` (75) | `docker rmi` of local builds `cloud-provisioner:<tag>` older than `IMAGE_MIN_AGE_H` (48 h) | Never an image a container uses, one that also has a registry tag, nor a release-shaped tag (`X.Y.Z`, `X.Y.Z-m.N`, `X.Y.Z-rc.N`: the local name creates pass to `--image`); so only dev builds (`*-SNAPSHOT.N`, branch tags), which `--build-stratio-image` builds again. Published images (`<registry>/…`) are kept: pulling them again may need a registry login |
 | 3 | Still ≥ `DISK_WARN_PCT` (85) | Log + `wall` warning | The rest is freed by hand (published images, old `/deployments/<cluster>/`) |
 
 Every removal is logged (`journalctl -t vm-autostop`). The thresholds can be overridden in `/etc/vm-autostop.conf` (`DISK_PRUNE_PCT=`, `DISK_WARN_PCT=`, `IMAGE_MIN_AGE_H=`); `install` rewrites that file and puts the defaults back. Two bootstraps at a time is the practical limit of a 30 GB root disk.
